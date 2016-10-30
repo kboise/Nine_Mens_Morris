@@ -1,6 +1,8 @@
 package board;
 
 public class Cell {
+    public String label = "xx";
+    public int index = -1;
     public boolean mill = false;
     
     public Player owner = null;
@@ -17,11 +19,13 @@ public class Cell {
     public Cell() { setInvalid(); setEmpty(); }
     
     /* Set owner of a cell to given player */
-    public void setOwner(Player p) { 
+    public boolean setOwner(Player p) { 
         if ( !isInvalid() && !isOccupied() ) {
             owner = p;
             setOccupied();
+            return true;
         }
+        return false;
     }
     
     public void clearMill()   { mill = false; }
@@ -37,21 +41,14 @@ public class Cell {
     public boolean isOccupied() { return (state == CellState.OCCUPIED); }
     public void setOccupied() { state = CellState.OCCUPIED; }
     
-    public char getStateChar() {
-        char stateCh;
+    public String getStateChar() {
+        String stateStr;
         
-        switch (state) {
-            case OCCUPIED:
-                stateCh = owner.getMark();
-                break;
-            case EMPTY:
-                stateCh = '-';
-                break;
-            default:
-                stateCh = ' ';
-                break;
+        if (state == CellState.OCCUPIED) { stateStr = owner.getMark();
+        } else if (state == CellState.EMPTY) { stateStr = "-";
+        } else { stateStr = " ";
         }
         
-        return stateCh;
+        return stateStr;
     }
 }

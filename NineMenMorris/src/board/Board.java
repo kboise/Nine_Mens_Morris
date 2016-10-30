@@ -1,12 +1,15 @@
 package board;
 
-import java.util.ArrayList;
+//import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Board {
     private int DIMENSION = 7;
     private Cell [][] board;
     private boolean placing = true;     // true: placing; false: moving
+    
+    public enum PlaceOrMoveStates { UNINITIALIZED, FAILED, SUCCESS, FORMEDMILL }
+    private PlaceOrMoveStates boardStatus = PlaceOrMoveStates.UNINITIALIZED;
     
     /* Console print variables */
     boolean colIsNumeric = false;
@@ -15,35 +18,92 @@ public class Board {
     private String LABELS = "ABCDEFG1234567abcdefg";
     
     /* Board's active Mills */
-    private ArrayList<Cell> rowMill;
-    private ArrayList<Cell> colMill;
+    //private ArrayList<Cell> rowMill;
+    //private ArrayList<Cell> colMill;
     
-    /* Placing men in 9-Men's morris */
-    //public boolean isPlacing() { return (placing == true); }
-    /* Moving men in 9-Men's morris */
-    public boolean isMoving() { return (placing == false); }
+    /*
+     * Board constructor: initialize board X-by-X grid of Cells and
+     * then setup Cell links based on adjacency/neighbor matrix
+     */
+    public Board() {
+        board = new Cell[DIMENSION][DIMENSION];
+        setNeighbors();
+    }
+    
+    /*
+     * Setup left, right, top and bottom neighbors of each cell on
+     * a 9-Men's-Morris game board (adjacency matrix for all 24-cells)
+     */
+    private void setNeighbors() {
+        String[] cellMap = "a1,d1,g1,b2,d2,f2,c3,d3,e3,a4,b4,c4,e4,f4,g4,c5,d5,e5,b6,d6,f6,a7,d7,g7".split(",");
+        int [][][] adjacency =  {
+            // cell, lft,  rht,  top,  bot
+            { {1,1}, {0,0}, {1,4}, {0,0}, {4,1} },
+            { {1,4}, {1,1}, {1,7}, {0,0}, {2,4} },
+            { {1,7}, {1,4}, {0,0}, {0,0}, {4,7} },
+            { {2,2}, {0,0}, {2,4}, {0,0}, {4,2} },
+            { {2,4}, {2,2}, {2,6}, {1,4}, {3,4} },
+            { {2,6}, {2,4}, {0,0}, {0,0}, {4,6} },
+            { {3,3}, {0,0}, {3,4}, {0,0}, {4,3} },
+            { {3,4}, {3,3}, {3,5}, {2,4}, {0,0} },
+            { {3,5}, {3,4}, {0,0}, {0,0}, {4,5} },
+            { {4,1}, {0,0}, {4,2}, {1,1}, {7,1} },
+            { {4,2}, {4,1}, {4,3}, {2,2}, {6,2} },
+            { {4,3}, {4,2}, {0,0}, {3,3}, {5,3} },
+            { {4,5}, {0,0}, {4,6}, {3,5}, {5,5} },
+            { {4,6}, {4,5}, {4,7}, {2,6}, {6,6} },
+            { {4,7}, {4,6}, {0,0}, {1,7}, {7,7} },
+            { {5,3}, {0,0}, {5,4}, {4,3}, {0,0} },
+            { {5,4}, {5,3}, {5,5}, {0,0}, {6,4} },
+            { {5,5}, {5,4}, {0,0}, {4,5}, {0,0} },
+            { {6,2}, {0,0}, {6,4}, {4,2}, {0,0} },
+            { {6,4}, {6,2}, {6,6}, {5,4}, {7,4} },
+            { {6,6}, {6,4}, {0,0}, {4,6}, {0,0} },
+            { {7,1}, {0,0}, {7,4}, {4,1}, {0,0} },
+            { {7,4}, {7,1}, {7,7}, {6,4}, {0,0} },
+            { {7,7}, {7,4}, {0,0}, {4,7}, {0,0} }
+        };
+        
+        Cell currCell;
+        for (int index = 0; index < adjacency.length; index++) {
+            currCell = createCell(adjacency[index][0][0], adjacency[index][0][1]);
+            currCell.index = index;             // integer index
+            currCell.label = cellMap[index];    // string label
+            
+            currCell.left = createCell(adjacency[index][1][0], adjacency[index][1][1]);
+            currCell.right = createCell(adjacency[index][2][0], adjacency[index][2][1]);
+            currCell.top = createCell(adjacency[index][3][0], adjacency[index][3][1]);
+            currCell.bottom = createCell(adjacency[index][4][0], adjacency[index][4][1]);
+        }
+    }
+    
+
+    
+    
+    
+    
+    
     
     /* Get and return leftmost cell from current cell */
     private Cell leftMostCell(Cell cell) {
-        Cell tCell = cell;
+        Cell leftCell = cell;
         
         // Go all the way to the left
-        while((tCell != null) && (tCell.left != null)) { tCell = tCell.left; }
+        while((leftCell != null) && (leftCell.left != null)) { leftCell = leftCell.left; }
         // return the left-most Cell
-        return tCell;
+        return leftCell;
     }
 
     /* Get and return topmost cell from current cell */
     private Cell topMostCell(Cell cell) {
-        Cell tCell = cell;
+        Cell topCell = cell;
         
         // Go all the way to the top
-        while((tCell != null) && (tCell.top != null)) { tCell = tCell.top; }
+        while((topCell != null) && (topCell.top != null)) { topCell = topCell.top; }
         // return the top-most Cell
-        return tCell;
+        return topCell;
     }
     
-
 
     private void setToMill(Cell cell, String direction) {
         if (direction.equals("top")) {
@@ -108,7 +168,7 @@ public class Board {
         while(tCell != null) {        
             // check each right cell if belonging to same owner
             if ((tCell.owner != null) && (cell.owner != null)) {
-                rowCount = ( tCell.owner.getName() == cell.owner.getName() ) ? rowCount + 1 : rowCount;
+                rowCount = ( tCell.owner.getName().equals(cell.owner.getName()) ) ? rowCount + 1 : rowCount;
             }
             tCell = tCell.right;
         }
@@ -122,7 +182,7 @@ public class Board {
         while(tCell != null) {        
             // check each bottom cell if belonging to same owner
             if ((tCell.owner != null) && (cell.owner != null)) {
-                colCount = ( tCell.owner.getName() == cell.owner.getName() ) ? colCount + 1 : colCount;
+                colCount = ( tCell.owner.getName().equals(cell.owner.getName()) ) ? colCount + 1 : colCount;
             }
             tCell = tCell.bottom;
         }        
@@ -139,7 +199,6 @@ public class Board {
      */
     public boolean placeMark(Player player, String dstCellAddr) {
         Cell cell = getCell(getRow(dstCellAddr), getCol(dstCellAddr));
-        boolean status = false;
         
         if ((cell != null) && !cell.isOccupied()) {
             cell.setOwner(player);      // take ownership of cell
@@ -148,98 +207,66 @@ public class Board {
             // Check if place formed a Mill
             if (isNewMill(cell, player)) {
                 System.out.println("Formed MILL at " + dstCellAddr);
+                setNewMill();
             }
-            status = true;
-        } else if (cell == null) { System.out.println("Cell " + dstCellAddr + " is INVALID!");
+            
+            return true;
+        } else if (cell == null) { System.out.println("Cell " + dstCellAddr + " is invalid!");
         } else if (cell.isOccupied()) { System.out.println("Cell " + dstCellAddr + " is occupied!");
         } else { System.out.println("PLACE:: Unhandled placeMark() error #1");
         }
         
-        return status;
+        return false;
     }
     
     /*
      * Move a player's mark from one cell to another
      * @param player: player of class Player
-     * @param srcCell: source cell coordinate, e.g. A1, C3, F4, etc.
-     * @param dstCell: destination cell coordinate, e.g. A1, C3, F4, etc.
+     * @param srcCellAddr: source cell coordinate, e.g. A1, C3, F4, etc.
+     * @param dstCellAddr: destination cell coordinate, e.g. A1, C3, F4, etc.
      * @return boolean true/false for successful/failed move
      */
     public boolean moveMark(Player player, String srcCellAddr, String dstCellAddr) {
         boolean status = false;
-        Cell dCell = getCell(getRow(dstCellAddr), getCol(dstCellAddr));
-        Cell sCell = getCell(getRow(srcCellAddr), getCol(srcCellAddr));
         
-        if ((sCell != null) && (dCell != null)) {
-            if (player.isOwner(sCell) && !dCell.isOccupied()) {
-                dCell.setOwner(player);     // Update destination owner
-                sCell.setEmpty();           // Clear source owner
+        Cell dstCell = getCell(getRow(dstCellAddr), getCol(dstCellAddr));
+        Cell srcCell = getCell(getRow(srcCellAddr), getCol(srcCellAddr));
+        
+        if ((srcCell != null) && (dstCell != null)) {
+            if (player.isOwner(srcCell) && !dstCell.isOccupied()) {
+                dstCell.setOwner(player);       // Update destination owner
+                srcCell.setEmpty();             // Clear source owner
                 status = true;
                 
                 // Check if move formed a Mill
-                if (isNewMill(dCell, player)) {
+                if (isNewMill(dstCell, player)) {
                     System.out.println("Formed MILL at " + dstCellAddr);
+                    //removeMark(player, getCell(getRow("e4"), getCol("e4")));
                 }
-            } else if (!player.isOwner(sCell)) {
-                System.out.println("Wrong owner for cell " + srcCellAddr + "; cannot move!");
-            } else if (dCell.isOccupied()) {
+            } else if (!player.isOwner(srcCell)) {
+                System.out.println("Wrong owner for cell " + srcCellAddr + "!");
+            } else if (dstCell.isOccupied()) {
                 System.out.println("Cell " + dstCellAddr + " is not empty!");
             }
-        } else if (!isMoving()) { System.out.println("Board not in MOVE state");
         } else {
-            System.out.println("MOVE:: Unhandled moveMark() error #1");
+            if (srcCell == null) { System.out.println("Cell " + srcCellAddr + " is invalid!");
+            } else if (dstCell == null) { System.out.println("Cell " + dstCellAddr + " is invalid!");
+            } else { System.out.println("MOVE:: Unhandled moveMark() error #1");
+            }
         }
         
         return status;
     }
     
-    /* Board constructor */
-    public Board() { initBoard(); }
-    
-    /*
-     * Setup left, right, top and bottom neighbors of each cell on
-     * a 9-Men's-Morris game board (adjacency matrix for all 24-cells)
-     */
-    private void setNeighbors() {
-        int [][][] adjacency =  {
-            // cell, lft,  rht,  top,  bot
-            { {1,1}, {0,0}, {1,4}, {0,0}, {4,1} },
-            { {1,4}, {1,1}, {1,7}, {0,0}, {2,4} },
-            { {1,7}, {1,4}, {0,0}, {0,0}, {4,7} },
-            { {2,2}, {0,0}, {2,4}, {0,0}, {4,2} },
-            { {2,4}, {2,2}, {2,6}, {1,4}, {3,4} },
-            { {2,6}, {2,4}, {0,0}, {0,0}, {4,6} },
-            { {3,3}, {0,0}, {3,4}, {0,0}, {4,3} },
-            { {3,4}, {3,3}, {3,5}, {2,4}, {0,0} },
-            { {3,5}, {3,4}, {0,0}, {0,0}, {4,5} },
-            { {4,1}, {0,0}, {4,2}, {1,1}, {7,1} },
-            { {4,2}, {4,1}, {4,3}, {2,2}, {6,2} },
-            { {4,3}, {4,2}, {0,0}, {3,3}, {5,3} },
-            { {4,5}, {0,0}, {4,6}, {3,5}, {5,5} },
-            { {4,6}, {4,5}, {4,7}, {2,6}, {6,6} },
-            { {4,7}, {4,6}, {0,0}, {1,7}, {7,7} },
-            { {5,3}, {0,0}, {5,4}, {4,3}, {0,0} },
-            { {5,4}, {5,3}, {5,5}, {0,0}, {6,4} },
-            { {5,5}, {5,4}, {0,0}, {4,5}, {0,0} },
-            { {6,2}, {0,0}, {6,4}, {4,2}, {0,0} },
-            { {6,4}, {6,2}, {6,6}, {5,4}, {7,4} },
-            { {6,6}, {6,4}, {0,0}, {4,6}, {0,0} },
-            { {7,1}, {0,0}, {7,4}, {4,1}, {0,0} },
-            { {7,4}, {7,1}, {7,7}, {6,4}, {0,0} },
-            { {7,7}, {7,4}, {0,0}, {4,7}, {0,0} }
-        };
-        
-        Cell currCell;
-        for (int group = 0; group < adjacency.length; group++) {
-            currCell = createCell(adjacency[group][0][0], adjacency[group][0][1]);
-            
-            currCell.left = createCell(adjacency[group][1][0], adjacency[group][1][1]);
-            currCell.right = createCell(adjacency[group][2][0], adjacency[group][2][1]);
-            currCell.top = createCell(adjacency[group][3][0], adjacency[group][3][1]);
-            currCell.bottom = createCell(adjacency[group][4][0], adjacency[group][4][1]);
+    public boolean removeMark(Player p, Cell c) {
+        if (c.isOccupied() && (!c.owner.getName().equals(p.getName()))) {
+            c.setEmpty();
+            p.killMan();
         }
+        return false;
     }
     
+
     /* Adjust an row-/col-index for proper base-0 indexing into board array */
     private int adjustIndex(int index) { return index - 1; }
     
@@ -282,12 +309,6 @@ public class Board {
         return cell;
     }
     
-    /* Initialize board 7X7 grid of Cells */
-    private void initBoard() {
-        board = new Cell[DIMENSION][DIMENSION];
-        setNeighbors();
-    }
-    
     /* Print game board column header */
     public void printColumnHeader(int spacer) {
         String str = " ";
@@ -315,7 +336,7 @@ public class Board {
             
             for (int j = 0; j < DIMENSION; j++) {
                 if (board[i][j] != null) {
-                    str += String.format("%s", Character.toString(board[i][j].getStateChar()));
+                    str += String.format("%s", board[i][j].getStateChar());
                 } else {
                     str += " ";
                 }
@@ -335,5 +356,33 @@ public class Board {
         char[] data = new char[length];
         Arrays.fill(data, c);
         return new String(data);
+    }
+    
+    public boolean hasNewMill() { return (boardStatus == PlaceOrMoveStates.FORMEDMILL); }
+    public void setNewMill() { boardStatus = PlaceOrMoveStates.FORMEDMILL; }
+    public void clearStatus() { boardStatus = PlaceOrMoveStates.UNINITIALIZED; }
+    
+    /*
+     * Given a player p, get all cells belonging p's opponent
+     */
+    public String getOpponentCells(Player p) {
+        String cellLabels = "";
+        Cell c;
+        
+        for (int i = 0; i < DIMENSION; i++) {
+            for (int j = 0; j < DIMENSION; j++) {
+                c = board[i][j];
+                
+                if ((c == null) || c.isEmpty()) {
+                    // skip all invalid cell iterations
+                    continue;
+                } else if (!c.owner.getName().equals(p.getName())) {
+                    // a1,b1,c3,etc
+                    cellLabels = (cellLabels.length() == 0) ? c.label : cellLabels + "," + c.label;
+                }
+            }
+        }
+        
+        return cellLabels;
     }
 }
