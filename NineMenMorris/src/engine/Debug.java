@@ -1,11 +1,51 @@
 package engine;
 
+import java.util.Scanner;
+import java.util.StringTokenizer;
+
 public class Debug {
     static Engine game;
+    static Scanner scanner;;
     
     public static void main(String[] args) {
+        //autoRun_v1();
+        autoRun_v2();
+        //interractive();
+    }
+    
+    public static void interractive() {
         game = new Engine();
+        scanner = new Scanner(System.in);
         
+        while (game.inPlaceMode()) { place(); }
+        System.out.println("Done with PLACE mode");
+        while (game.inMoveMode()) { move(); }
+    }
+    
+    public static void place() {
+        System.out.print("PLACE[P" + game.activePlayer.getName() + "], e.g. a1, b2, e4: ");
+        game.place(scanner.nextLine());
+    }
+    
+    public static void move() {
+        System.out.print("MOVE [P" + game.activePlayer.getName() + "], e.g. a1-d1, g4-f4: ");
+        String input = scanner.nextLine();
+        input = input.replaceAll(" ", "").trim();
+        String[] addr = input.split("-");
+        game.move(addr[0],  addr[1]);
+    }
+
+    public static void autoRun_v2() {
+        game = new Engine();
+        String[] plays = "d2,c3,d3,c5,d1,b6".split(",");
+        for (int i = 0; i < plays.length; i++) {
+            game.place(plays[i]);
+        }
+    }
+    
+    
+    public static void autoRun_v1() {
+        game = new Engine();
         game.place("d2");
         
         // attempt to exhaust player's play turns

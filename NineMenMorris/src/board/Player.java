@@ -30,13 +30,13 @@ public class Player {
     }
     
     
-    public boolean isOwner(Cell c) { return (c != null) && getName() == c.owner.getName(); }
+    public boolean isOwner(Cell c) { return (c != null) && (c.owner != null) && (getName().equals(c.owner.getName())); }
     
     private void setMark(char pMark) { mark = pMark; }
-    public char getMark() { return mark; }
+    public String getMark() { return Character.toString(mark); }
     
     private void setName(char pName) { name= pName; }
-    public char getName() { return name; }
+    public String getName() { return Character.toString(name); }
     
     public void doPlace() { placeCount--; }
     public boolean canPlace() { return (placeCount > 0); }
