@@ -8,6 +8,9 @@ public class Engine {
     Player p1, p2, activePlayer, inActivePlayer;
     String removeCells = "";
     
+    /* Get a player's class */
+    public Player getPlayer(String name) { return (name == "p1") ? p1 : p2; }
+    
     /*
      * Create a new game board and associated players
      */
@@ -100,9 +103,18 @@ public class Engine {
         }
     }
     
-    public void remove(String dstCell) {
-        removeCells = "";
-        setNextPlayer();
+    public void remove(String dstCellAddr) {
+        String msg = String.format("Player-%s remove Player-%s cell %s", activePlayer.getName(), 
+                        inActivePlayer.getName(), dstCellAddr);
+        
+        if (removeCells.contains(dstCellAddr)) {
+            cBoard.removeMark(inActivePlayer, dstCellAddr);
+            removeCells = "";
+            doPrint("REMOVE:: " + msg);
+            setNextPlayer();
+        } else {
+            System.out.println("Remove FAILED!");
+        }
     }
     
     public void doPrint() { doPrint(""); }

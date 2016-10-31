@@ -258,8 +258,10 @@ public class Board {
         return status;
     }
     
-    public boolean removeMark(Player p, Cell c) {
-        if (c.isOccupied() && (!c.owner.getName().equals(p.getName()))) {
+    public boolean removeMark(Player p, String cellAddr) {
+        Cell c = getCell(getRow(cellAddr), getCol(cellAddr));
+        
+        if (c.isOccupied() && (c.owner.getName().equals(p.getName()))) {
             c.setEmpty();
             p.killMan();
         }

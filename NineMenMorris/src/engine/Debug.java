@@ -1,7 +1,6 @@
 package engine;
 
 import java.util.Scanner;
-import java.util.StringTokenizer;
 
 public class Debug {
     static Engine game;
@@ -37,10 +36,12 @@ public class Debug {
 
     public static void autoRun_v2() {
         game = new Engine();
-        String[] plays = "d2,c3,d3,c5,d1,b6".split(",");
+        String[] plays = "d2,c3,d3,c5,d1".split(",");
         for (int i = 0; i < plays.length; i++) {
             game.place(plays[i]);
         }
+        
+        game.remove("c3");
     }
     
     
