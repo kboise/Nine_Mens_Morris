@@ -42,6 +42,23 @@ public class Debug {
         }
         
         game.remove("c3");
+        
+        plays = "d5,b6,e5,c5,d1".split(",");
+        for (int i = 0; i < plays.length; i++) {
+            game.place(plays[i]);
+        }
+        
+        game.remove("d3");
+        
+        plays = "a1,g1".split(",");
+        for (int i = 0; i < plays.length; i++) {
+            game.place(plays[i]);
+        }
+        game.remove("b6");
+        plays = "a1,g1".split(",");
+        for (int i = 0; i < plays.length; i++) {
+            game.place(plays[i]);
+        }
     }
     
     

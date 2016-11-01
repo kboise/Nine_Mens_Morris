@@ -1,7 +1,11 @@
 NOTES:
 
 Engine.java
-- 
+- When a Mill is formed, opponent's cells that can be removed are available in Engine.getCellsToRemove()
+  - getCellsToRemove() == (String.length() == 0) when a Mill is not formed
+
+
+
 
 Board.java
 - This is the 9-Men's morris game board (containing 24 Cells)
@@ -14,3 +18,4 @@ Cell.java
 - Board cell class (only 24 are valid, i.e. != null for 9-Men's Morris game)
 - Each cell has left, right, top and bottom properties
   - cell.[left|right|top|bottom] == NULL -> associated property is not valid in board 
+  

@@ -3,7 +3,7 @@ package board;
 public class Cell {
     public String label = "xx";
     public int index = -1;
-    public boolean mill = false;
+    public int millCount = 0;       // Number of Mills to which a cell belongs 
     
     public Player owner = null;
     public enum CellState {
@@ -28,9 +28,9 @@ public class Cell {
         return false;
     }
     
-    public void clearMill()   { mill = false; }
-    public void setMill()     { mill = true; }
-    public boolean isInMill() { return mill; }
+    public void clearMill()   { millCount--; }
+    public void setMill()     { millCount++; }
+    public boolean isInMill() { return (millCount > 0); }
     
     public boolean isInvalid() { return (state == CellState.INVALID); }
     public void setInvalid() { state = CellState.INVALID; }
@@ -40,6 +40,13 @@ public class Cell {
     
     public boolean isOccupied() { return (state == CellState.OCCUPIED); }
     public void setOccupied() { state = CellState.OCCUPIED; }
+    
+    public boolean hasOwner() { return (owner != null); }
+    public boolean matchOwner(Player p) {
+        return ((p != null) && (owner != null) && 
+                (owner.getName().equals(p.getName()))
+                );
+    }
     
     public String getStateChar() {
         String stateStr;

@@ -3,7 +3,7 @@ package board;
 import java.util.ArrayList;
 
 public class Player {
-    private final int MEN = 3;
+    private final int MEN = 9;
     private char mark = 'M';
     private char name = 'N';
     public int placeCount = MEN;
