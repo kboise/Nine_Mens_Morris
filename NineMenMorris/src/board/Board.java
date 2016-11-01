@@ -370,7 +370,7 @@ public class Board {
                     cellLabels = (cellLabels.length() == 0) ? c.label : cellLabels + "," + c.label;
                 } else {
                     // Flying
-                    System.out.println("Player-" + p.getName() + " is flying!");
+                    //System.out.println("Player-" + p.getName() + " is flying!");
                 }
             }
         }

@@ -73,7 +73,8 @@ public class Engine {
         String result = "";
         
         if (inRemoveMode()) {
-            System.out.println("Remove for Player-" + inActivePlayer.getName() + " is pending!");
+            System.out.println("\nRemove for Player-" + inActivePlayer.getName() + " is pending!");
+            System.out.println("PLACE:: " + msg + "; ABORTED!");
         } else if (inPlaceMode() & activePlayer.canPlace()) {
             result = cBoard.placeMark(activePlayer, dstCellAddr);
             
@@ -125,7 +126,8 @@ public class Engine {
             doPrint("REMOVE:: " + msg);
             setNextPlayer();
         } else {
-            System.out.println("Remove FAILED!");
+            System.out.println("\nRemove FAILED; " + dstCellAddr + " not part of valid cells to remove");
+            System.out.println("-- Need to attempt Remove from " + getCellsToRemove());
         }
     }
     
