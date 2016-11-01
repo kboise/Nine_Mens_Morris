@@ -185,7 +185,7 @@ public class Board {
      * @param boardCol: integer type column# (base-1)
      * @return: referenced board cell 
      */
-    private Cell getCell(int boardRow, int boardCol) {
+    public Cell getCell(int boardRow, int boardCol) {
         Cell cell = null;
         
         if (isValidCellAddr(boardRow, boardCol)) {
@@ -194,7 +194,7 @@ public class Board {
         return cell;
     }
     
-    private Cell getCell(String cellAddr) { return getCell(getRow(cellAddr), getCol(cellAddr));}
+    public Cell getCell(String cellAddr) { return getCell(getRow(cellAddr), getCol(cellAddr));}
     
     /*
      * Set a given cell address as belonging to a player
