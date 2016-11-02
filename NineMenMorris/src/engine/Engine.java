@@ -114,7 +114,15 @@ public class Engine {
             System.out.println("Remove for Player-" + inActivePlayer.getName() + " is pending!");
         } else if (inMoveMode() && activePlayer.canMove()) {
             status = cBoard.moveMark(activePlayer,  srcCell, dstCell);
-            if (status.equals("SUCCESS")) { setNextPlayer(); }
+            if (status.equals("SUCCESS")) { 
+            	setNextPlayer(); 
+            	} else if (status.contains(",")) {
+                    // moveMark was successful and resulted in a Mill for activePlayer
+                    // status == copy comma-separated cells to cellsToRemove
+                    setCellsToRemove(cBoard.getOpponentCells(activePlayer));
+                    doPrint("MOVE:: " + msg + "; SUCCESS!");
+                    showMillNotification();
+                }
         } else { System.out.println("Board not in MOVE state ->> MOVE " + msg + " FAILED!");
         }
     }
