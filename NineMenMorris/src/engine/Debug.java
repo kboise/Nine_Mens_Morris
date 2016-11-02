@@ -55,10 +55,21 @@ public class Debug {
             game.place(plays[i]);
         }
         game.remove("b6");
-        plays = "a1,g1".split(",");
+        plays = "a1,g1,g4,g7,d7,a7,b6,b4,b2,c3".split(",");
         for (int i = 0; i < plays.length; i++) {
             game.place(plays[i]);
         }
+        
+        plays = "f2".split(",");
+        for (int i = 0; i < plays.length; i++) {
+            game.place(plays[i]);
+        }
+
+        game.move("g4","f4");
+        
+        game.cBoard.getVacantNeighbors("a1");
+        System.out.println("All vacant cells = " + game.cBoard.getVacantCells());
+
     }
     
     
