@@ -36,7 +36,7 @@ public class Cell {
     public void setInvalid() { state = CellState.INVALID; }
     
     public boolean isEmpty() { return (state == CellState.EMPTY); }
-    public void setEmpty() { state = CellState.EMPTY; }
+    public void setEmpty() { state = CellState.EMPTY; owner = null; }
     
     public boolean isOccupied() { return (state == CellState.OCCUPIED); }
     public void setOccupied() { state = CellState.OCCUPIED; }

@@ -6,7 +6,6 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 
 import javax.swing.*;
 import javax.swing.JPanel;
@@ -20,9 +19,6 @@ public class BoardGUI extends JPanel {
 
 	private final int[] boardPoint = {9,0,1,2,14,23,22,21,9,10,3,4,1,4,5,13,14,13,20,19,22,19,18,10,11,6,7,4,7,8,12,13,12,17,16,19,16,15,11};
 	private int startClicked = 0;
-	private ArrayList<Integer> postionList = new ArrayList<Integer>();
-
-	private int remainMarks = 9;
 	
 	private String[] guiToBoardMap = {"a1", "d1", "g1",
 	                        "b2", "d2", "f2",
@@ -33,6 +29,8 @@ public class BoardGUI extends JPanel {
 	                        "a7", "d7", "g7"};
 	
 	private Engine gameEngine;
+
+	private int selectedMoveMakerIndex = -1;
 	
 	public BoardGUI() {
 	    gameEngine = new Engine();
@@ -76,6 +74,7 @@ public class BoardGUI extends JPanel {
 		Image img = new ImageIcon(getClass().getResource("background.jpg")).getImage();
 		g.drawImage(img,0,0,null);
 		
+		// draw the board line
 		for (int i = 0; i < boardPoint.length-1; i++) {
 			    
 				Point start = getPositionCoords(boardPoint[i]);
@@ -86,21 +85,18 @@ public class BoardGUI extends JPanel {
 				g2.drawLine(start.x, start.y, end.x, end.y);
 			
 		}
-		
+		// line intersection point
 		for (int i = 0; i < 24; i++) {
 			Point coords = getPositionCoords(i);
 			g.setColor(Color.BLACK);
 			g.fillOval(coords.x - getSize().height/100, coords.y - getSize().height/100, getSize().height/50, getSize().height/50);
 		}
+		Board currentBoard = gameEngine.getBoard();
 		
 		if(startClicked == 1){
-			int k = 0;
-			for (int i : postionList) {
-				if(k%2==0){
-					g.setColor(Color.WHITE);}
-				else{
-					g.setColor(Color.BLACK);
-					}
+			for (int i = 0; i<24;i++) {
+				if (selectedMoveMakerIndex == i){
+					g.setColor(Color.RED);
 					Point coords = getPositionCoords(i);
 					
 					//g.fillOval(coords.x - 20, coords.y - 20, 40, 40);
@@ -111,11 +107,37 @@ public class BoardGUI extends JPanel {
 					g2.setColor(Color.gray);
 					//g2.drawOval(coords.x - 20, coords.y - 20, 40, 40);
 					g2.drawOval(coords.x - getSize().height/30, coords.y - getSize().height/30, getSize().height/15, getSize().height/15);
-					k++;
+				} else if (currentBoard.getCell(guiToBoardMap[i]).isOccupied()&&currentBoard.getCell(guiToBoardMap[i]).owner == gameEngine.getPlayer("p1")){
+					
+					g.setColor(Color.WHITE);
+					
+					Point coords = getPositionCoords(i);
+					
+					//g.fillOval(coords.x - 20, coords.y - 20, 40, 40);
+					g.fillOval(coords.x - getSize().height/30, coords.y - getSize().height/30, getSize().height/15, getSize().height/15);
+					Graphics2D g2 = (Graphics2D) g;
+					// Draw pieces boundary
+					g2.setStroke(new BasicStroke(getSize().height/400));
+					g2.setColor(Color.gray);
+					//g2.drawOval(coords.x - 20, coords.y - 20, 40, 40);
+					g2.drawOval(coords.x - getSize().height/30, coords.y - getSize().height/30, getSize().height/15, getSize().height/15);
+			} else if(currentBoard.getCell(guiToBoardMap[i]).isOccupied()&&currentBoard.getCell(guiToBoardMap[i]).owner == gameEngine.getPlayer("p2")){
+					g.setColor(Color.BLACK);
+					Point coords = getPositionCoords(i);
+					
+					//g.fillOval(coords.x - 20, coords.y - 20, 40, 40);
+					g.fillOval(coords.x - getSize().height/30, coords.y - getSize().height/30, getSize().height/15, getSize().height/15);
+					Graphics2D g2 = (Graphics2D) g;
+					// Draw pieces boundary
+					g2.setStroke(new BasicStroke(getSize().height/400));
+					g2.setColor(Color.gray);
+					//g2.drawOval(coords.x - 20, coords.y - 20, 40, 40);
+					g2.drawOval(coords.x - getSize().height/30, coords.y - getSize().height/30, getSize().height/15, getSize().height/15);
+					}
 			}	
 		}
 		
-		for(int i = remainMarks; i > 0; i--){
+		for(int i = gameEngine.getPlayer("p1").placeCount; i > 0; i--){
 			Point coords = getPositionCoords(2);
 			g.setColor(Color.WHITE);
 			int x = coords.x + getSize().height/10 - getSize().height/30 + (9-i)%3*getSize().height/15;
@@ -123,25 +145,14 @@ public class BoardGUI extends JPanel {
 			g.fillOval(x, y, getSize().height/15, getSize().height/15);
 		}
 		
-		if((postionList.size()%2-1)==0){
-			for(int i = remainMarks + 1 ; i > 0; i--){
+		for(int i = gameEngine.getPlayer("p2").placeCount ; i > 0; i--){
 				Point coords = getPositionCoords(14);
 				g.setColor(Color.BLACK);
 				int x = coords.x + getSize().height/10 - getSize().height/30 + (9-i)%3*getSize().height/15;
 				int y = coords.y + getSize().height/10 - getSize().height/30 + ((9 - i)/3)*getSize().height/15;
 				g.fillOval(x, y, getSize().height/15, getSize().height/15);
 			}
-		} else {
-			for(int i = remainMarks ; i > 0; i--){
-				Point coords = getPositionCoords(14);
-				g.setColor(Color.BLACK);
-				int x = coords.x + getSize().height/10 - getSize().height/30 + (9-i)%3*getSize().height/15;
-				int y = coords.y + getSize().height/10 - getSize().height/30 + ((9 - i)/3)*getSize().height/15;
-				g.fillOval(x, y, getSize().height/15, getSize().height/15);
-			}	
-		}
-		
-		
+
 	}
 	
 	private class Controller extends MouseAdapter {
@@ -156,11 +167,18 @@ public class BoardGUI extends JPanel {
 				
 				if (coords.x - getSize().height/30 <= x && x <= coords.x + getSize().height/30
 						&& coords.y - getSize().height/30 <= y && y <= coords.y + getSize().height/30) {
-					postionList.add(i);
-					gameEngine.place(guiToBoardMap[i]);
-					
-					if((postionList.size()%2-1)==0){
-						remainMarks -= 1;
+					// check: inPlaceMode() can coexist with inRemoveMode. So I change as following
+					if (!gameEngine.inRemoveMode()&&!gameEngine.inMoveMode()) {
+						gameEngine.place(guiToBoardMap[i]);
+					} else if (gameEngine.inRemoveMode()) { 
+						gameEngine.remove(guiToBoardMap[i]);	
+					} else if (gameEngine.inMoveMode()) {
+						if (gameEngine.getBoard().getCell(guiToBoardMap[i]).owner == gameEngine.getActivePlayer()) {
+							selectedMoveMakerIndex = i;
+						} else if (selectedMoveMakerIndex != -1) { 
+							gameEngine.move(guiToBoardMap[selectedMoveMakerIndex], guiToBoardMap[i]);
+						    selectedMoveMakerIndex = -1;
+						}
 					}
 					repaint();
 					break;

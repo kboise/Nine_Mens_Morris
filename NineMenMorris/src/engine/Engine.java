@@ -13,6 +13,10 @@ public class Engine {
     /* Get a player's class */
     public Player getPlayer(String name) { return (name == "p1") ? p1 : p2; }
     
+    public Player getActivePlayer() { return activePlayer; }
+    
+    public Board getBoard(){ return cBoard; }
+    
     public void doPrint() { doPrint(""); }
     public void doPrint(String str) {
         System.out.println("\n== " + str);
@@ -110,7 +114,7 @@ public class Engine {
             System.out.println("Remove for Player-" + inActivePlayer.getName() + " is pending!");
         } else if (inMoveMode() && activePlayer.canMove()) {
             status = cBoard.moveMark(activePlayer,  srcCell, dstCell);
-            if (status.equals("")) { setNextPlayer(); }
+            if (status.equals("SUCCESS")) { setNextPlayer(); }
         } else { System.out.println("Board not in MOVE state ->> MOVE " + msg + " FAILED!");
         }
     }
