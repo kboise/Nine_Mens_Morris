@@ -5,7 +5,7 @@ import board.Player;
 
 public class Engine {
     Board cBoard;
-    Player p1, p2, activePlayer, inActivePlayer;
+    public Player p1, p2, activePlayer, inActivePlayer;
     String cellsToRemove = "";
     String placeCells = "";
     String newMillCells = "";
