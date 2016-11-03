@@ -3,29 +3,29 @@ package board;
 public class Cell {
     public String label = "xx";
     public int index = -1;
-    public int millCount = 0;       // Number of Mills to which a cell belongs 
+    private int millCount = 0;       // Number of Mills to which a cell belongs 
     
     public Player owner = null;
-    public enum CellState {
+    private enum CellState {
         INVALID, EMPTY, OCCUPIED
     }
-    public CellState state = CellState.INVALID;
+    private CellState state = CellState.INVALID;
     
     public Cell left = null;
     public Cell right = null;
     public Cell top = null;
     public Cell bottom = null;
     
-    public Cell() { setInvalid(); setEmpty(); }
+    public Cell() { setEmpty(); }
     
     /* Set owner of a cell to given player */
     public boolean setOwner(Player p) { 
-        if ( !isInvalid() && !isOccupied() ) {
+        if ( !isOccupied() ) {
             owner = p;
             setOccupied();
             return true;
         }
-        return false;
+        return isOccupied();
     }
     
     public void clearMill()   { millCount--; }

@@ -4,8 +4,8 @@ import board.Board;
 import board.Player;
 
 public class Engine {
-    Board cBoard;
-    Player p1, p2, activePlayer, inActivePlayer;
+    public Board cBoard;
+    public Player p1, p2, activePlayer, inActivePlayer;
     String cellsToRemove = "";
     String placeCells = "";
     String newMillCells = "";
@@ -96,7 +96,9 @@ public class Engine {
                 // Failed placeMark
                 System.out.println("PLACE:: " + msg + "; " + result);
             }
-        } else { System.out.println("Board not in PLACE state ->>  PLACE " + msg + " FAILED!");
+        } else if (inMoveMode()) { System.out.println("Board in MOVE mode ->>  PLACE " + msg + " FAILED!");
+        } else if (inRemoveMode()) { System.out.println("Board in REMOVE mode ->>  PLACE " + msg + " FAILED!");
+        } else { System.out.println("Board in UNKNOWN state ->>  PLACE " + msg + " FAILED!");
         }
     }
     
@@ -106,23 +108,39 @@ public class Engine {
      * @param srcCell: source cell address
      * @param dstCell: destination cell address
      */
-    public void move(String srcCell, String dstCell) {
-        String msg = String.format("Player-%s @ %s -> %s", activePlayer.getName(), srcCell, dstCell);;
-        String status = "";
+    public void move(String srcCellAddr, String dstCellAddr) {
+        String msg = String.format("Player-%s @ %s -> %s", activePlayer.getName(), srcCellAddr, dstCellAddr);;
+        String vacantCells = "";
+        String result = "";
         
         if (inRemoveMode()) {
             System.out.println("Remove for Player-" + inActivePlayer.getName() + " is pending!");
+            System.out.println("MOVE:: " + msg + "; ABORTED!");
         } else if (inMoveMode() && activePlayer.canMove()) {
-            status = cBoard.moveMark(activePlayer,  srcCell, dstCell);
-            if (status.equals("SUCCESS")) { 
-            	setNextPlayer(); 
-            	} else if (status.contains(",")) {
+            vacantCells = cBoard.getVacantNeighbors(srcCellAddr);
+            if (!vacantCells.contains(dstCellAddr)) {
+                System.out.println("Cell-" + dstCellAddr + " not in possible move set");
+                System.out.println("MOVE:: " + msg + "; " + " FAILED");
+            } else {
+                result = cBoard.moveMark(activePlayer, srcCellAddr, dstCellAddr);
+                
+                if (result.equals("SUCCESS")) {
+                    // moveMark was successful but did not result in a Mill for activePlayer
+                    doPrint("MOVE:: " + msg + "; " + result);
+                    setNextPlayer();
+                } else if (result.contains(",")) {
                     // moveMark was successful and resulted in a Mill for activePlayer
-                    // status == copy comma-separated cells to cellsToRemove
+                    // result == copy comma-separated cells to cellsToRemove
                     setCellsToRemove(cBoard.getOpponentCells(activePlayer));
                     doPrint("MOVE:: " + msg + "; SUCCESS!");
                     showMillNotification();
+                } else {
+                    // Failed placeMark
+                    System.out.println("MOVE:: " + msg + "; " + result);
                 }
+                
+                if (result.equals("")) { setNextPlayer(); }
+            }
         } else { System.out.println("Board not in MOVE state ->> MOVE " + msg + " FAILED!");
         }
     }
