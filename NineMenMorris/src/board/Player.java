@@ -8,12 +8,7 @@ public class Player {
     private char name = 'N';
     public int placeCount = MEN;
     public int manCount = 0;
-    private ArrayList<Cell> rowMill;
-    private ArrayList<Cell> colMill;
-    
-    /* Add bottom-most cell as tail of mills */
-    public void addRowMill(Cell rightCell) { rowMill.add(rightCell); }
-    public void addColMill(Cell bottomCell) { colMill.add(bottomCell); }
+    public Player opponent = null;
     
     /*
      * Constructor for Player class
@@ -24,9 +19,6 @@ public class Player {
         setName(pName);
         setMark(pMark);
         manCount = placeCount;
-        
-        rowMill = new ArrayList<Cell>();
-        colMill = new ArrayList<Cell>();
     }
     
     

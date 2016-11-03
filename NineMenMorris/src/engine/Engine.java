@@ -13,7 +13,7 @@ public class Engine {
     /* Get a player's class */
     public Player getPlayer(String name) { return (name == "p1") ? p1 : p2; }
     
-    public void doPrint() { doPrint(""); }
+    //public void doPrint() { doPrint(""); }
     public void doPrint(String str) {
         System.out.println();
         cBoard.getOwnedCells(activePlayer, true);
@@ -27,9 +27,7 @@ public class Engine {
         cBoard.printBoard();
     }
     
-    /*
-     * Create a new game board and associated players
-     */
+    /* Create a new game board and associated players */
     public void startNewGame() {
         System.out.println("Printing 9-Men's Morris board");
         
@@ -38,6 +36,8 @@ public class Engine {
         
         p1 = new Player('1','X');
         p2 = new Player('2','O');
+        p1.opponent = p2;
+        p2.opponent = p1;
         
         setNextPlayer();
     }
@@ -54,9 +54,8 @@ public class Engine {
      *   p1 gets turn after p2
      */
     public void setNextPlayer() {
-        if      (activePlayer == null) { activePlayer = p1; inActivePlayer = p2; }
-        else if (activePlayer == p1)   { activePlayer = p2; inActivePlayer = p1; }
-        else if (activePlayer == p2)   { activePlayer = p1; inActivePlayer = p2; }
+        activePlayer = (activePlayer == null) ? p1 : activePlayer.opponent;
+        inActivePlayer = activePlayer.opponent;
     }
     
     /*
@@ -82,7 +81,7 @@ public class Engine {
             } else if (result.contains(",")) {
                 // placeMark was successful and resulted in a Mill for activePlayer
                 // result == copy comma-separated cells to cellsToRemove
-                setCellsToRemove(cBoard.getOpponentCells(activePlayer));
+                setCellsToRemove();
                 doPrint("PLACE:: " + msg + "; SUCCESS!");
                 showMillNotification();
             } else {
@@ -124,7 +123,7 @@ public class Engine {
                 } else if (result.contains(",")) {
                     // moveMark was successful and resulted in a Mill for activePlayer
                     // result == copy comma-separated cells to cellsToRemove
-                    setCellsToRemove(cBoard.getOpponentCells(activePlayer));
+                    setCellsToRemove();
                     doPrint("MOVE:: " + msg + "; SUCCESS!");
                     showMillNotification();
                 } else {
@@ -155,7 +154,16 @@ public class Engine {
     }
     
     /* Set string value to cellsToRemove */
-    public void setCellsToRemove(String commaSeparatedString) { cellsToRemove = commaSeparatedString; }
+    public void setCellsToRemove() {
+        // Case-1: Opponent has non-Mill-forming cells
+        cellsToRemove = cBoard.getNonMillOwnedCells(inActivePlayer, false);
+        
+        // Check if no non-Mill cells found
+        if (cellsToRemove.length() == 0) {
+            // Case-2: Opponent only has Mill-forming cells
+            cellsToRemove = cBoard.getMillOwnedCells(inActivePlayer, false);
+        }
+    }
     /* Set string value to cellsToRemove */
     public void clearCellsToRemove() { cellsToRemove = ""; }
     public String getCellsToRemove() { return cellsToRemove; }

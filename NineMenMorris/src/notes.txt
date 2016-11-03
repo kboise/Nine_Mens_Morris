@@ -1,7 +1,17 @@
 NOTES:
 
-Cell.hasOpenNeighbor()
-- check if cell can move left/right/top/bottom
+11/03/2016 - 1:00 AM
+- added a couple more APIs to Board and Cell classes
+  Board.getOwnedCells(Player, true);
+  Board.getNonMillOwnedCells(Player, true);
+  Board.getMillOwnedCells(Player, true);
+  Board.getVacantCells();
+  Cell.hasOpenNeighbor()
+  - check if cell can move left/right/top/bottom
+
+- Expanded Mill-detect-and-Remove logic to allow removal of an opponent's mark, even if existing 
+  marks are part of a Mill (see autorun_v3() example in Debug class) 
+
 
 
 

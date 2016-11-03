@@ -352,6 +352,7 @@ public class Board {
         if (c.isOccupied() && p.isOwner(c)) {
             c.setEmpty();
             p.killMan();
+            //(void)getNewMillCells(cellAddr, p);
         }
         return false;
     }

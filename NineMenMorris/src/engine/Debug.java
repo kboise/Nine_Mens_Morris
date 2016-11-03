@@ -8,7 +8,8 @@ public class Debug {
     
     public static void main(String[] args) {
         //autoRun_v1();
-        autoRun_v2();
+        //autoRun_v2();
+        autoRun_v3();
         //interractive();
     }
     
@@ -33,7 +34,24 @@ public class Debug {
         String[] addr = input.split("-");
         game.move(addr[0],  addr[1]);
     }
-
+    
+    public static void autoRun_v3() {
+        game = new Engine();
+        String[] plays = "a1,b2,d1,d2,a4,f2,g5".split(",");
+        for (int i = 0; i < plays.length; i++) {
+            game.place(plays[i]);
+        }
+        
+        game.remove("a4");
+        
+        plays = "g1".split(",");
+        for (int i = 0; i < plays.length; i++) {
+            game.place(plays[i]);
+        }
+        
+        game.remove("d2");
+    }
+    
     public static void autoRun_v2() {
         game = new Engine();
         String[] plays = "d2,c3,d3,c5,d1".split(",");
