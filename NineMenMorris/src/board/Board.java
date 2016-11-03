@@ -185,7 +185,7 @@ public class Board {
      * @param boardCol: integer type column# (base-1)
      * @return: referenced board cell 
      */
-    private Cell getCell(int boardRow, int boardCol) {
+    public Cell getCell(int boardRow, int boardCol) {
         Cell cell = null;
         
         if (isValidCellAddr(boardRow, boardCol)) {
@@ -194,7 +194,7 @@ public class Board {
         return cell;
     }
     
-    private Cell getCell(String cellAddr) { return getCell(getRow(cellAddr), getCol(cellAddr));}
+    public Cell getCell(String cellAddr) { return getCell(getRow(cellAddr), getCol(cellAddr));}
     
     /*
      * Set a given cell address as belonging to a player
@@ -214,7 +214,6 @@ public class Board {
             status = getNewMillCells(cell, player);
             // Comma-separated cell labels == cells that formed mill;
             status = (status.length() == 0) ? "SUCCESS" : status;
-            //System.out.println("PLACE:: " + status);
         } else if (cell == null) { System.out.println("Cell " + dstCellAddr + " is invalid!");
         } else if (cell.isOccupied()) { System.out.println("Cell " + dstCellAddr + " is occupied!");
         } else { System.out.println("PLACE:: Unhandled placeMark() error #1");
@@ -371,6 +370,49 @@ public class Board {
                 } else {
                     // Flying
                     //System.out.println("Player-" + p.getName() + " is flying!");
+                }
+            }
+        }
+        
+        return cellLabels;
+    }
+
+    /* Given a cell address, get comma-separated list of available cells */
+    public String getVacantNeighbors(String cellAddr) {
+        String neighbors = "";
+        Cell c = getCell(cellAddr);
+        
+        if (c != null) {
+            if ((c.left != null) && !c.left.isOccupied()) {
+                neighbors = (neighbors.length() == 0) ? c.left.label : neighbors + "," + c.left.label;
+            }
+            if ((c.right != null) && !c.right.isOccupied()) {
+                neighbors = (neighbors.length() == 0) ? c.right.label : neighbors + "," + c.right.label;
+            }
+            if ((c.top != null) && !c.top.isOccupied()) {
+                neighbors = (neighbors.length() == 0) ? c.top.label : neighbors + "," + c.top.label;
+            }
+            if ((c.bottom != null) && !c.bottom.isOccupied()) {
+                neighbors = (neighbors.length() == 0) ? c.bottom.label : neighbors + "," + c.bottom.label;
+            }
+            
+            System.out.println("\nCell-" + c.label + " has neighbor(s) \"" + neighbors.replace(",", ", ") + "\"");
+        }
+        
+        return neighbors;
+    }
+    
+    /* Get all empty/vacant cells on Board */
+    public String getVacantCells() {
+        String cellLabels = "";
+        Cell c;
+        
+        for (int i = 0; i < DIMENSION; i++) {
+            for (int j = 0; j < DIMENSION; j++) {
+                c = board[i][j];
+                
+                if ((c != null) && c.isEmpty()) {
+                    cellLabels = (cellLabels.length() == 0) ? c.label : cellLabels + "," + c.label;
                 }
             }
         }
