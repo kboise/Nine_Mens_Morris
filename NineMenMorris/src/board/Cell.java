@@ -18,6 +18,17 @@ public class Cell {
     
     public Cell() { setEmpty(); }
     
+    public String getStateChar() {
+        String stateStr;
+        
+        if (state == CellState.OCCUPIED) { stateStr = owner.getMark();
+        } else if (state == CellState.EMPTY) { stateStr = "-";
+        } else { stateStr = " ";
+        }
+        
+        return stateStr;
+    }
+    
     /* Set owner of a cell to given player */
     public boolean setOwner(Player p) { 
         if ( !isOccupied() ) {
@@ -36,26 +47,28 @@ public class Cell {
     public void setInvalid() { state = CellState.INVALID; }
     
     public boolean isEmpty() { return (state == CellState.EMPTY); }
-    public void setEmpty() { state = CellState.EMPTY; }
+    public void setEmpty() { state = CellState.EMPTY; clearOwner(); }
     
     public boolean isOccupied() { return (state == CellState.OCCUPIED); }
     public void setOccupied() { state = CellState.OCCUPIED; }
     
     public boolean hasOwner() { return (owner != null); }
+    public void clearOwner() { owner = null; }
     public boolean matchOwner(Player p) {
         return ((p != null) && (owner != null) && 
                 (owner.getName().equals(p.getName()))
                 );
     }
     
-    public String getStateChar() {
-        String stateStr;
+    /* Check if Cell has an empty neighbor */
+    public boolean hasOpenNeighbor() {
+        boolean status = false;
         
-        if (state == CellState.OCCUPIED) { stateStr = owner.getMark();
-        } else if (state == CellState.EMPTY) { stateStr = "-";
-        } else { stateStr = " ";
-        }
+        status |= (left != null) && !left.hasOwner();
+        status |= (right != null) && !right.hasOwner();
+        status |= (top != null) && !top.hasOwner();
+        status |= (bottom != null) && !bottom.hasOwner();
         
-        return stateStr;
+        return status;
     }
 }

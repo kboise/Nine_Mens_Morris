@@ -7,7 +7,7 @@ public class Board {
     private int DIMENSION = 7;
     private Cell [][] board;
     public enum PlaceOrMoveStates { UNINITIALIZED, FAILED, SUCCESS, FORMEDMILL }
-    private PlaceOrMoveStates boardStatus = PlaceOrMoveStates.UNINITIALIZED;
+    //private PlaceOrMoveStates boardStatus = PlaceOrMoveStates.UNINITIALIZED;
     
     /* Console print variables */
     boolean colIsNumeric = false;
@@ -162,15 +162,11 @@ public class Board {
                         repeatChar(' ', numSpacer));
             
             for (int j = 0; j < DIMENSION; j++) {
-                if (board[i][j] != null) {
-                    str += String.format("%s", board[i][j].getStateChar());
-                } else {
-                    str += " ";
+                if (board[i][j] != null) { str += String.format("%s", board[i][j].getStateChar());
+                } else { str += " ";
                 }
                 
-                if (j < DIMENSION - 1) {
-                    str += repeatChar(' ', numSpacer);
-                }
+                if (j < DIMENSION - 1) { str += repeatChar(' ', numSpacer); }
             }
             System.out.println(str);
             str = "";
@@ -195,6 +191,13 @@ public class Board {
     }
     
     private Cell getCell(String cellAddr) { return getCell(getRow(cellAddr), getCol(cellAddr));}
+    
+    /* Useful for console printing of a character a certain number of times */
+    private static final String repeatChar(char c, int length) {
+        char[] data = new char[length];
+        Arrays.fill(data, c);
+        return new String(data);
+    }
     
     /*
      * Set a given cell address as belonging to a player
@@ -253,11 +256,25 @@ public class Board {
         while((cell != null) && cell.hasOwner() && p.isOwner(cell)) {
             matchCount += 1;
             millCells = (millCells.length() == 0) ? cell.label : millCells + "," + cell.label;
+            
             if (direction.equals("left")) { cell = cell.left;
             } else if (direction.equals("right")) { cell = cell.right;
             } else if (direction.equals("top")) { cell = cell.top;
             } else if (direction.equals("bottom")) { cell = cell.bottom;
             }
+        }
+
+        // Didn't form a mill; clear status
+        if (matchCount != 3) { 
+            while((cell != null) && cell.hasOwner() && p.isOwner(cell)) {
+                cell.clearMill();
+                
+                if (direction.equals("left")) { cell = cell.left;
+                } else if (direction.equals("right")) { cell = cell.right;
+                } else if (direction.equals("top")) { cell = cell.top;
+                } else if (direction.equals("bottom")) { cell = cell.bottom;
+                }
+            }            
         }
         
         //System.out.println("Maybe mill -- " + millCells);
@@ -292,7 +309,7 @@ public class Board {
         
         return millCells;
     }
-
+    
     /*
      * Move a player's mark from one cell to another
      * @param player: player of class Player
@@ -339,17 +356,9 @@ public class Board {
         return false;
     }
     
-
-    /* Useful for console printing of a character a certain number of times */
-    private static final String repeatChar(char c, int length) {
-        char[] data = new char[length];
-        Arrays.fill(data, c);
-        return new String(data);
-    }
-    
-    public boolean hasNewMill() { return (boardStatus == PlaceOrMoveStates.FORMEDMILL); }
-    public void setNewMill() { boardStatus = PlaceOrMoveStates.FORMEDMILL; }
-    public void clearStatus() { boardStatus = PlaceOrMoveStates.UNINITIALIZED; }
+    //public boolean hasNewMill() { return (boardStatus == PlaceOrMoveStates.FORMEDMILL); }
+    //public void setNewMill() { boardStatus = PlaceOrMoveStates.FORMEDMILL; }
+    //public void clearStatus() { boardStatus = PlaceOrMoveStates.UNINITIALIZED; }
     
     /* Given a player p, get all cells belonging p's opponent */
     public String getOpponentCells(Player p) {
@@ -377,7 +386,10 @@ public class Board {
         return cellLabels;
     }
 
-    /* Given a cell address, get comma-separated list of available cells */
+    /*
+     * Given a cell address, get comma-separated list of available neighboring cells
+     * into which player's mark at cell-address can move
+     */
     public String getVacantNeighbors(String cellAddr) {
         String neighbors = "";
         Cell c = getCell(cellAddr);
@@ -395,14 +407,19 @@ public class Board {
             if ((c.bottom != null) && !c.bottom.isOccupied()) {
                 neighbors = (neighbors.length() == 0) ? c.bottom.label : neighbors + "," + c.bottom.label;
             }
-            
-            System.out.println("\nCell-" + c.label + " has neighbor(s) \"" + neighbors.replace(",", ", ") + "\"");
+            System.out.println("Board.getVacantNeighbors():: Cell-" + c.label + " has neighbor(s) \"" 
+                    + neighbors.replace(",", ", ") + "\"");
+        } else {
+            System.out.println("Board.getVacantNeighbors():: Cell-? is NULL");
         }
-        
         return neighbors;
     }
     
-    /* Get all empty/vacant cells on Board */
+    /*
+     * Get all empty/vacant cells on Board
+     * - can be used in determining possible Place locations
+     * - can be used in determining possible Move locations when a player can fly
+     */
     public String getVacantCells() {
         String cellLabels = "";
         Cell c;
@@ -415,6 +432,75 @@ public class Board {
                     cellLabels = (cellLabels.length() == 0) ? c.label : cellLabels + "," + c.label;
                 }
             }
+        }
+        
+        System.out.println("Board.getVacantCells():: Board has vacant cell(s): \"" + cellLabels.replace(",", ", ") + "\"");
+        return cellLabels;
+    }
+
+    /* Get all cells belonging to player p */
+    public String getOwnedCells(Player p, boolean doPrint) {
+        String cellLabels = "";
+        Cell c;
+        
+        if (p != null) {
+            for (int i = 0; i < DIMENSION; i++) {
+                for (int j = 0; j < DIMENSION; j++) {
+                    c = board[i][j];
+                    
+                    if ((p != null) && p.isOwner(c)) {
+                        cellLabels = (cellLabels.length() == 0) ? c.label : cellLabels + "," + c.label;
+                    }
+                }
+            }
+            
+            if (doPrint) System.out.println("Board.getOwnedCells():: Player-" + p.getName() + " owns cell(s): \"" + cellLabels.replace(",", ", ") + "\"");
+        } else {
+            if (doPrint) System.out.println("Board.getOwnedCells():: Player-? is NULL");
+        }
+        return cellLabels;
+    }
+
+    /* Get Mill-formed cells belonging to Player */
+    public String getNonMillOwnedCells(Player p, boolean doPrint) {
+        String[] cellAddrs = getOwnedCells(p, false).split(",");
+        String cellLabels = "";
+        Cell c;
+        if (p != null ) {
+            for (int i = 0; i < cellAddrs.length; i++) {
+                if (cellAddrs[i].length() > 0) {
+                    c = getCell(cellAddrs[i]);
+                    
+                    if ((c != null) && !c.isInMill()) {
+                        cellLabels = (cellLabels.length() == 0) ? c.label : cellLabels + "," + c.label;
+                    }
+                }
+            }
+            if (doPrint) System.out.println("Board.getNonMillOwnedCells():: Player-" + p.getName() + 
+                    " has non-Mill cell(s): \"" + cellLabels.replace(",", ", ")+ "\"");
+        } else {
+            if (doPrint) System.out.println("Board.getNonMillOwnedCells():: Player-? is NULL");
+        }
+        
+        return cellLabels;
+    }
+    
+    /* Get Mill-formed cells belonging to Player */
+    public String getMillOwnedCells(Player p, boolean doPrint) {
+        String[] ownedCellAddrs = getOwnedCells(p, false).split(",");
+        String nonMillCellAddrs = getNonMillOwnedCells(p, false);
+        String cellLabels = "";
+        
+        if (p != null) {
+            for (int i = 0; i < ownedCellAddrs.length; i++) {
+                if (!nonMillCellAddrs.contains(ownedCellAddrs[i])) {
+                    cellLabels = (cellLabels.length() == 0) ? ownedCellAddrs[i] : cellLabels + "," + ownedCellAddrs[i];
+                }
+            }
+            if (doPrint) System.out.println("Board.getMillOwnedCells():: Player-" + p.getName() + 
+                    " has Mill cell(s): \"" + cellLabels.replace(",", ", ")+ "\"");
+        } else {
+            if (doPrint) System.out.println("Board.getMillOwnedCells():: Player-? is NULL");
         }
         
         return cellLabels;

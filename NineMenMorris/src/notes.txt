@@ -1,5 +1,11 @@
 NOTES:
 
+Cell.hasOpenNeighbor()
+- check if cell can move left/right/top/bottom
+
+
+
+
 Engine.java
 - When a Mill is formed, opponent's cells that can be removed are available in Engine.getCellsToRemove()
   - getCellsToRemove() == (String.length() == 0) when a Mill is not formed

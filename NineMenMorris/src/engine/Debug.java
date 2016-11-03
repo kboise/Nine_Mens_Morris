@@ -68,8 +68,9 @@ public class Debug {
         game.move("g4","f4");
         
         game.cBoard.getVacantNeighbors("a1");
-        System.out.println("All vacant cells = " + game.cBoard.getVacantCells());
-
+        game.cBoard.getVacantCells();
+        game.cBoard.getOwnedCells(game.p1, true);
+        game.cBoard.getOwnedCells(game.p2, true);
     }
     
     

@@ -15,7 +15,15 @@ public class Engine {
     
     public void doPrint() { doPrint(""); }
     public void doPrint(String str) {
-        System.out.println("\n== " + str);
+        System.out.println();
+        cBoard.getOwnedCells(activePlayer, true);
+        cBoard.getNonMillOwnedCells(activePlayer, true);
+        cBoard.getMillOwnedCells(activePlayer, true);
+        cBoard.getOwnedCells(inActivePlayer, true);
+        cBoard.getNonMillOwnedCells(inActivePlayer, true);
+        cBoard.getMillOwnedCells(inActivePlayer, true);
+        cBoard.getVacantCells();
+        System.out.println("== " + str);
         cBoard.printBoard();
     }
     
@@ -50,17 +58,6 @@ public class Engine {
         else if (activePlayer == p1)   { activePlayer = p2; inActivePlayer = p1; }
         else if (activePlayer == p2)   { activePlayer = p1; inActivePlayer = p2; }
     }
-    
-    
-    /*
-    public void setupMillCells(boolean getCells) {
-        if (getCells) { cellsToRemove = cBoard.getOpponentCells(activePlayer); }
-        
-        System.out.println("MILL:: New mill was formed for Player-" + activePlayer.getName() + ".");
-        System.out.println("       Select a Player-" + inActivePlayer.getName() + " cell to remove from \""
-                + cellsToRemove.replace(",",", ") + "\"");
-    }
-    */
     
     /*
      * Place a Man/Mark for activePlayer at destination cell address;
@@ -172,4 +169,5 @@ public class Engine {
         System.out.println("       Select a Player-" + inActivePlayer.getName() + " cell to remove from \""
                 + cellsToRemove.replace(",",", ") + "\"");
     }
+
 }
