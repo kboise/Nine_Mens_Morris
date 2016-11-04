@@ -34,6 +34,7 @@ public class Player {
     public boolean canPlace() { return (placeCount > 0); }
     public boolean canFly() { return (manCount == 3); }
     public boolean canMove() { return (manCount > 0); }
+    public boolean hasLost() { return (manCount < 3); }
     
     public void killMan() { manCount--; }
 

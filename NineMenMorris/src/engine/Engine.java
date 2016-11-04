@@ -56,9 +56,11 @@ public class Engine {
     
     public Engine() { startNewGame(); }
     
-    public boolean inRemoveMode() { return (cellsToRemove.length() != 0); }
-    public boolean inPlaceMode() { return (p1.canPlace() || p2.canPlace()); }
-    public boolean inMoveMode() { return !inPlaceMode(); }
+    public boolean gameOver() { return (p1.hasLost() || p2.hasLost()); }
+    
+    public boolean inRemoveMode() { return !gameOver() && (cellsToRemove.length() != 0); }
+    public boolean inPlaceMode() { return !gameOver() && (p1.canPlace() || p2.canPlace()); }
+    public boolean inMoveMode() { return !gameOver() && !inPlaceMode(); }
     
     /*
      * Toggle player at each turn, such that:
@@ -102,6 +104,7 @@ public class Engine {
             }
         } else if (inMoveMode()) { System.out.println("Board in MOVE mode ->>  PLACE " + msg + " FAILED!");
         } else if (inRemoveMode()) { System.out.println("Board in REMOVE mode ->>  PLACE " + msg + " FAILED!");
+        } else if (gameOver()) { System.out.println("Game is over!!!");
         } else { System.out.println("Board in UNKNOWN state ->>  PLACE " + msg + " FAILED!");
         }
     }
@@ -121,7 +124,12 @@ public class Engine {
             System.out.println("Remove for Player-" + inActivePlayer.getName() + " is pending!");
             System.out.println("MOVE:: " + msg + "; ABORTED!");
         } else if (inMoveMode() && activePlayer.canMove()) {
-            vacantCells = cBoard.getVacantNeighbors(srcCellAddr);
+            if (activePlayer.canFly()) {
+                vacantCells = cBoard.getVacantCells();
+            } else {
+                vacantCells = cBoard.getVacantNeighbors(srcCellAddr);
+            }
+            
             if (!vacantCells.contains(dstCellAddr)) {
                 System.out.println("Cell-" + dstCellAddr + " not in possible move set");
                 System.out.println("MOVE:: " + msg + "; " + " FAILED");
@@ -145,6 +153,7 @@ public class Engine {
                 
                 if (result.equals("")) { setNextPlayer(); }
             }
+        } else if (gameOver()) { System.out.println("Game is over!!!");
         } else { System.out.println("Board not in MOVE state ->> MOVE " + msg + " FAILED!");
         }
     }

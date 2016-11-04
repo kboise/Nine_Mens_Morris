@@ -11,6 +11,7 @@ import javax.swing.*;
 import javax.swing.JPanel;
 
 import board.Board;
+import board.Cell;
 import engine.Engine;
 
 
@@ -18,7 +19,7 @@ public class BoardGUI extends JPanel {
 	private static final long serialVersionUID = 2961261317989680041L;
 
 	private final int[] boardPoint = {9,0,1,2,14,23,22,21,9,10,3,4,1,4,5,13,14,13,20,19,22,19,18,10,11,6,7,4,7,8,12,13,12,17,16,19,16,15,11};
-	private int startClicked = 0;
+	
 	
 	private String[] guiToBoardMap = {"a1", "d1", "g1",
 	                        "b2", "d2", "f2",
@@ -35,6 +36,12 @@ public class BoardGUI extends JPanel {
 	public BoardGUI() {
 	    gameEngine = new Engine();
 		addMouseListener(new Controller());
+		
+	}
+	
+	public void setEngine(Engine gameEngine){
+		this.gameEngine = gameEngine;
+		repaint();
 	}
 	
 	Point getPositionCoords(int position) {
@@ -91,12 +98,13 @@ public class BoardGUI extends JPanel {
 			g.setColor(Color.BLACK);
 			g.fillOval(coords.x - getSize().height/100, coords.y - getSize().height/100, getSize().height/50, getSize().height/50);
 		}
-		Board currentBoard = gameEngine.getBoard();
+		Board currentBoard = gameEngine.cBoard;
+		Cell c = null;
 		
-		if(startClicked == 1){
+		
 			for (int i = 0; i<24;i++) {
 				if (selectedMoveMakerIndex == i){
-					g.setColor(Color.RED);
+					g.setColor(Color.CYAN);
 					Point coords = getPositionCoords(i);
 					
 					//g.fillOval(coords.x - 20, coords.y - 20, 40, 40);
@@ -107,37 +115,40 @@ public class BoardGUI extends JPanel {
 					g2.setColor(Color.gray);
 					//g2.drawOval(coords.x - 20, coords.y - 20, 40, 40);
 					g2.drawOval(coords.x - getSize().height/30, coords.y - getSize().height/30, getSize().height/15, getSize().height/15);
-				} else if (currentBoard.getCell(guiToBoardMap[i]).isOccupied()&&currentBoard.getCell(guiToBoardMap[i]).owner == gameEngine.getPlayer("p1")){
-					
-					g.setColor(Color.WHITE);
-					
-					Point coords = getPositionCoords(i);
-					
-					//g.fillOval(coords.x - 20, coords.y - 20, 40, 40);
-					g.fillOval(coords.x - getSize().height/30, coords.y - getSize().height/30, getSize().height/15, getSize().height/15);
-					Graphics2D g2 = (Graphics2D) g;
-					// Draw pieces boundary
-					g2.setStroke(new BasicStroke(getSize().height/400));
-					g2.setColor(Color.gray);
-					//g2.drawOval(coords.x - 20, coords.y - 20, 40, 40);
-					g2.drawOval(coords.x - getSize().height/30, coords.y - getSize().height/30, getSize().height/15, getSize().height/15);
-			} else if(currentBoard.getCell(guiToBoardMap[i]).isOccupied()&&currentBoard.getCell(guiToBoardMap[i]).owner == gameEngine.getPlayer("p2")){
-					g.setColor(Color.BLACK);
-					Point coords = getPositionCoords(i);
-					
-					//g.fillOval(coords.x - 20, coords.y - 20, 40, 40);
-					g.fillOval(coords.x - getSize().height/30, coords.y - getSize().height/30, getSize().height/15, getSize().height/15);
-					Graphics2D g2 = (Graphics2D) g;
-					// Draw pieces boundary
-					g2.setStroke(new BasicStroke(getSize().height/400));
-					g2.setColor(Color.gray);
-					//g2.drawOval(coords.x - 20, coords.y - 20, 40, 40);
-					g2.drawOval(coords.x - getSize().height/30, coords.y - getSize().height/30, getSize().height/15, getSize().height/15);
-					}
+				} else {
+				    c = currentBoard.getCell(guiToBoardMap[i]);
+				    if (c.isOccupied() && gameEngine.p1.isOwner(c)){
+    					
+    					g.setColor(Color.WHITE);
+    					
+    					Point coords = getPositionCoords(i);
+    					
+    					//g.fillOval(coords.x - 20, coords.y - 20, 40, 40);
+    					g.fillOval(coords.x - getSize().height/30, coords.y - getSize().height/30, getSize().height/15, getSize().height/15);
+    					Graphics2D g2 = (Graphics2D) g;
+    					// Draw pieces boundary
+    					g2.setStroke(new BasicStroke(getSize().height/400));
+    					g2.setColor(Color.gray);
+    					//g2.drawOval(coords.x - 20, coords.y - 20, 40, 40);
+    					g2.drawOval(coords.x - getSize().height/30, coords.y - getSize().height/30, getSize().height/15, getSize().height/15);
+    				} else if(c.isOccupied() && gameEngine.p2.isOwner(c)){
+    					g.setColor(Color.BLACK);
+    					Point coords = getPositionCoords(i);
+    					
+    					//g.fillOval(coords.x - 20, coords.y - 20, 40, 40);
+    					g.fillOval(coords.x - getSize().height/30, coords.y - getSize().height/30, getSize().height/15, getSize().height/15);
+    					Graphics2D g2 = (Graphics2D) g;
+    					// Draw pieces boundary
+    					g2.setStroke(new BasicStroke(getSize().height/400));
+    					g2.setColor(Color.gray);
+    					//g2.drawOval(coords.x - 20, coords.y - 20, 40, 40);
+    					g2.drawOval(coords.x - getSize().height/30, coords.y - getSize().height/30, getSize().height/15, getSize().height/15);
+    				}
+                }
 			}	
-		}
 		
-		for(int i = gameEngine.getPlayer("p1").placeCount; i > 0; i--){
+		
+		for(int i = gameEngine.p1.placeCount; i > 0; i--){
 			Point coords = getPositionCoords(2);
 			g.setColor(Color.WHITE);
 			int x = coords.x + getSize().height/10 - getSize().height/30 + (9-i)%3*getSize().height/15;
@@ -145,7 +156,7 @@ public class BoardGUI extends JPanel {
 			g.fillOval(x, y, getSize().height/15, getSize().height/15);
 		}
 		
-		for(int i = gameEngine.getPlayer("p2").placeCount ; i > 0; i--){
+		for(int i = gameEngine.p2.placeCount ; i > 0; i--){
 				Point coords = getPositionCoords(14);
 				g.setColor(Color.BLACK);
 				int x = coords.x + getSize().height/10 - getSize().height/30 + (9-i)%3*getSize().height/15;
@@ -158,7 +169,7 @@ public class BoardGUI extends JPanel {
 	private class Controller extends MouseAdapter {
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			startClicked = 1;
+			
 			int x = e.getX();
 			int y = e.getY();
 			
