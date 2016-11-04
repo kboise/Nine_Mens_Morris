@@ -8,7 +8,8 @@ public class Debug {
     
     public static void main(String[] args) {
         //autoRun_v1();
-        autoRun_v2();
+        //autoRun_v2();
+        autoRun_v3();
         //interractive();
     }
     
@@ -33,7 +34,34 @@ public class Debug {
         String[] addr = input.split("-");
         game.move(addr[0],  addr[1]);
     }
-
+    
+    public static void autoRun_v3() {
+        game = new Engine();
+        String[] plays = "a1,b2,d1,d2,a4,f2,g5".split(",");
+        for (int i = 0; i < plays.length; i++) {
+            game.place(plays[i]);
+        }
+        
+        game.remove("a4");
+        
+        plays = "g1".split(",");
+        for (int i = 0; i < plays.length; i++) {
+            game.place(plays[i]);
+        }
+        
+        game.remove("d2");
+        
+        plays = "d3,d2,c3,e3,c4,c5,b4,a4,a7,d7,f4".split(",");
+        for (int i = 0; i < plays.length; i++) {
+            game.place(plays[i]);
+        }
+        
+        game.move("g1", "g4");
+        game.move("f4", "f6");
+        game.move("g4", "g1");
+        game.remove("f6");
+    }
+    
     public static void autoRun_v2() {
         game = new Engine();
         String[] plays = "d2,c3,d3,c5,d1".split(",");
@@ -55,10 +83,22 @@ public class Debug {
             game.place(plays[i]);
         }
         game.remove("b6");
-        plays = "a1,g1".split(",");
+        plays = "a1,g1,g4,g7,d7,a7,b6,b4,b2,c3".split(",");
         for (int i = 0; i < plays.length; i++) {
             game.place(plays[i]);
         }
+        
+        plays = "f2".split(",");
+        for (int i = 0; i < plays.length; i++) {
+            game.place(plays[i]);
+        }
+
+        game.move("g4","f4");
+        
+        game.cBoard.getVacantNeighbors("a1");
+        game.cBoard.getVacantCells();
+        game.cBoard.getOwnedCells(game.p1, true);
+        game.cBoard.getOwnedCells(game.p2, true);
     }
     
     
