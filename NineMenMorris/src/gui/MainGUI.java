@@ -1,7 +1,7 @@
 package gui;
 
 import java.awt.BorderLayout;
-
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -25,8 +25,8 @@ public class MainGUI extends JFrame {
     private BoardGUI boardPanel;
     private JPanel bottomBar;
     private JButton startGameButton;
-    private JLabel status;
-    private String statusMessage = "White marker's turn";
+    private JLabel turnsStatus;
+    private JLabel modeStatus;
     
     @SuppressWarnings("serial")
 	public MainGUI() {
@@ -38,22 +38,42 @@ public class MainGUI extends JFrame {
         bottomBar = new JPanel(){
         	@Override
         	protected void paintComponent(Graphics g){
+        		super.paintComponent(g);
         		if ( boardPanel.gameEngine.gameOver()) {
         			 if (boardPanel.gameEngine.getActivePlayer() == boardPanel.gameEngine.p1) {
-        				 status.setText("Black win");
+        				 modeStatus.setForeground(Color.CYAN);
+        				 modeStatus.setText("Congrats!!! Black win!!!");
+        				 turnsStatus.setText("");
         			 } else {
-        				 status.setText("white win");
-        				 
-        			 }
-        			 
+        				 modeStatus.setText("Congrats!!! white win!!!");
+        				 turnsStatus.setText("");
+        			 } 
+        		} else if ( boardPanel.gameEngine.inMoveMode() && !boardPanel.gameEngine.inRemoveMode() ) {
+        			if (boardPanel.gameEngine.getActivePlayer().canFly()) {
+        				modeStatus.setForeground(Color.RED);
+            			modeStatus.setText("Flying!!!!!");
+        			} else { modeStatus.setForeground(Color.BLACK);
+        					 modeStatus.setText("Move");
+        			}
+        		} else if ( boardPanel.gameEngine.inRemoveMode() && !boardPanel.gameEngine.gameOver()) {
+        			modeStatus.setForeground(Color.BLUE);
+        			modeStatus.setText("Mill forms, Please Remove");
+        		} else {
+        			modeStatus.setForeground(Color.BLACK);
+        			modeStatus.setText("placing");
         		}
-
+        		if ( boardPanel.gameEngine.getActivePlayer() == boardPanel.gameEngine.p1) {
+        			turnsStatus.setText("White Markers Turn");
+        		} else {
+        			turnsStatus.setText("Black Markers Turn");
+        		}
+        		
         		repaint();
         	}
         	
         };
         
-        bottomBar.setLayout(new FlowLayout(FlowLayout.LEADING, 30, 0));
+        bottomBar.setLayout(new FlowLayout(FlowLayout.LEADING, 30, 1));
         
         
         startGameButton = new JButton("Play Again");
@@ -67,12 +87,12 @@ public class MainGUI extends JFrame {
 
         bottomBar.add(startGameButton);
        
-
-        status = new JLabel("");
-		status.setFont(new Font(Font.DIALOG_INPUT, Font.BOLD, 15));
-		status.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-		bottomBar.add(status);
-        
+        turnsStatus = new JLabel("");
+        modeStatus = new JLabel("");
+		turnsStatus.setFont(new Font(Font.DIALOG_INPUT, Font.BOLD, 15));
+		turnsStatus.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		bottomBar.add(turnsStatus);
+		bottomBar.add(modeStatus);
         add(bottomBar, BorderLayout.SOUTH);
     }
     
