@@ -29,9 +29,11 @@ public class BoardGUI extends JPanel {
 	                        "b6", "d6", "f6",
 	                        "a7", "d7", "g7"};
 	
-	private Engine gameEngine;
+	public Engine gameEngine;
 
 	private int selectedMoveMakerIndex = -1;
+	
+	private String statusMesg = "";
 	
 	public BoardGUI() {
 	    gameEngine = new Engine();
@@ -42,6 +44,9 @@ public class BoardGUI extends JPanel {
 	public void setEngine(Engine gameEngine){
 		this.gameEngine = gameEngine;
 		repaint();
+	}
+	public String getStatusMesg() {
+		return statusMesg;
 	}
 	
 	Point getPositionCoords(int position) {
@@ -81,6 +86,11 @@ public class BoardGUI extends JPanel {
 		Image img = new ImageIcon(getClass().getResource("background.jpg")).getImage();
 		g.drawImage(img,0,0,null);
 		
+		if ( gameEngine.getActivePlayer() == gameEngine.p1 ) {
+			statusMesg = "White marker's turn";
+		} else {
+			statusMesg = "Black marker's turn";
+		}
 		// draw the board line
 		for (int i = 0; i < boardPoint.length-1; i++) {
 			    
@@ -178,9 +188,10 @@ public class BoardGUI extends JPanel {
 				
 				if (coords.x - getSize().height/30 <= x && x <= coords.x + getSize().height/30
 						&& coords.y - getSize().height/30 <= y && y <= coords.y + getSize().height/30) {
-					// check: inPlaceMode() can coexist with inRemoveMode. So I change as following
+					
 					if (!gameEngine.inRemoveMode()&&!gameEngine.inMoveMode()) {
 						gameEngine.place(guiToBoardMap[i]);
+						
 					} else if (gameEngine.inRemoveMode()) { 
 						gameEngine.remove(guiToBoardMap[i]);	
 					} else if (gameEngine.inMoveMode()) {
