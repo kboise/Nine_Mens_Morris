@@ -191,7 +191,6 @@ public class Board {
     }
     
     public Cell getCell(String cellAddr) { return getCell(getRow(cellAddr), getCol(cellAddr));}
-<<<<<<< HEAD
     
     /* Useful for console printing of a character a certain number of times */
     private static final String repeatChar(char c, int length) {
@@ -199,8 +198,6 @@ public class Board {
         Arrays.fill(data, c);
         return new String(data);
     }
-=======
->>>>>>> addTest
     
     /*
      * Set a given cell address as belonging to a player
