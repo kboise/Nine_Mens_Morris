@@ -62,9 +62,9 @@ public class MainGUI extends JFrame {
         			modeStatus.setForeground(Color.BLACK);
         			modeStatus.setText("placing");
         		}
-        		if ( boardPanel.gameEngine.getActivePlayer() == boardPanel.gameEngine.p1) {
+        		if ( !boardPanel.gameEngine.gameOver() && boardPanel.gameEngine.getActivePlayer() == boardPanel.gameEngine.p1) {
         			turnsStatus.setText("White Markers Turn");
-        		} else {
+        		} else if ( !boardPanel.gameEngine.gameOver() ) {
         			turnsStatus.setText("Black Markers Turn");
         		}
         		
@@ -89,7 +89,8 @@ public class MainGUI extends JFrame {
        
         turnsStatus = new JLabel("");
         modeStatus = new JLabel("");
-		turnsStatus.setFont(new Font(Font.DIALOG_INPUT, Font.BOLD, 15));
+		turnsStatus.setFont(new Font(Font.DIALOG_INPUT, Font.BOLD, 30));
+		modeStatus.setFont(new Font(Font.DIALOG, Font.LAYOUT_NO_LIMIT_CONTEXT, 30));
 		turnsStatus.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		bottomBar.add(turnsStatus);
 		bottomBar.add(modeStatus);
