@@ -3,7 +3,9 @@ package board;
 public class Cell {
     public String label = "xx";
     public int index = -1;
-    private int millCount = 0;       // Number of Mills to which a cell belongs 
+    //private int millCount = 0;       // Number of Mills to which a cell belongs
+    public boolean rowMill;
+    public boolean columnMill;
     
     public Player owner = null;
     private enum CellState {
@@ -39,9 +41,11 @@ public class Cell {
         return isOccupied();
     }
     
-    public void clearMill()   { millCount--; }
-    public void setMill()     { millCount++; }
-    public boolean isInMill() { return (millCount > 0); }
+    public void clearRowMill()     { rowMill = false; }
+    public void clearColumnMill()     { columnMill = false; }
+    public void setRowMill()     { rowMill = true; }
+    public void setColumnMill()     { columnMill = true; }
+    public boolean isInMill() { return (rowMill || columnMill); }
     
     public boolean isInvalid() { return (state == CellState.INVALID); }
     public void setInvalid() { state = CellState.INVALID; }

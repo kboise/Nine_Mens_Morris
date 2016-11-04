@@ -36,5 +36,10 @@ public class Player {
     public boolean canMove() { return (manCount > 0); }
     
     public void killMan() { manCount--; }
+
+    public int getPlaceCount() { return placeCount; }
     
+    public void printStats() {
+        System.out.println("Player-" + getName() + ":: CanPlace [" + placeCount + "], CanMove [" + manCount + "]");
+    }
 }

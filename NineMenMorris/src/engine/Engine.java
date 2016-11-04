@@ -11,20 +11,29 @@ public class Engine {
     String newMillCells = "";
     
     /* Get a player's class */
-    public Player getPlayer(String name) { return (name == "p1") ? p1 : p2; }
+    //public Player getPlayer(String name) { return (name == "p1") ? p1 : p2; }
+    
+    private void printStats(Player p) {
+        if (p != null ) { p.printStats();
+        } else { System.out.println("Player-? is yet to PLACE");
+        }
+        cBoard.getOwnedCells(p, true);
+        cBoard.getNonMillOwnedCells(p, true);
+        cBoard.getMillOwnedCells(p, true);
+    }
     
     //public void doPrint() { doPrint(""); }
     public void doPrint(String str) {
+        System.out.println();        
+        printStats(activePlayer);
         System.out.println();
-        cBoard.getOwnedCells(activePlayer, true);
-        cBoard.getNonMillOwnedCells(activePlayer, true);
-        cBoard.getMillOwnedCells(activePlayer, true);
-        cBoard.getOwnedCells(inActivePlayer, true);
-        cBoard.getNonMillOwnedCells(inActivePlayer, true);
-        cBoard.getMillOwnedCells(inActivePlayer, true);
+        printStats(inActivePlayer);
+        
         cBoard.getVacantCells();
+        
         System.out.println("== " + str);
         cBoard.printBoard();
+        System.out.println();
     }
     
     /* Create a new game board and associated players */
