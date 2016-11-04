@@ -42,10 +42,10 @@ public class MainGUI extends JFrame {
         		if ( boardPanel.gameEngine.gameOver()) {
         			 if (boardPanel.gameEngine.getActivePlayer() == boardPanel.gameEngine.p1) {
         				 modeStatus.setForeground(Color.CYAN);
-        				 modeStatus.setText("Congrats!!! Black win!!!");
+        				 modeStatus.setText("Game over - Black wins!!!");
         				 turnsStatus.setText("");
         			 } else {
-        				 modeStatus.setText("Congrats!!! white win!!!");
+        				 modeStatus.setText("Game over - White wins!!!");
         				 turnsStatus.setText("");
         			 } 
         		} else if ( boardPanel.gameEngine.inMoveMode() && !boardPanel.gameEngine.inRemoveMode() ) {
@@ -53,20 +53,21 @@ public class MainGUI extends JFrame {
         				modeStatus.setForeground(Color.RED);
             			modeStatus.setText("Flying!!!!!");
         			} else { modeStatus.setForeground(Color.BLACK);
-        					 modeStatus.setText("Move");
+        					 modeStatus.setText("Mode: Moving");
         			}
         		} else if ( boardPanel.gameEngine.inRemoveMode() && !boardPanel.gameEngine.gameOver()) {
         			modeStatus.setForeground(Color.BLUE);
         			//modeStatus.setFont(new Font(modeStatus.getFont().getName(), Font.BOLD, 30));
-        			modeStatus.setText("Mill forms, Please Remove");
+        			modeStatus.setText("Mill formed! Remove opponent");
         		} else {
         			modeStatus.setForeground(Color.BLACK);
-        			modeStatus.setText("placing");
+        			modeStatus.setText("Mode: Placing");
         		}
+        		
         		if ( !boardPanel.gameEngine.gameOver() && boardPanel.gameEngine.getActivePlayer() == boardPanel.gameEngine.p1) {
-        			turnsStatus.setText("White Markers Turn");
+        			turnsStatus.setText("Turn: White");
         		} else if ( !boardPanel.gameEngine.gameOver() ) {
-        			turnsStatus.setText("Black Markers Turn");
+        			turnsStatus.setText("Turn: Black");
         		}
         		
         		repaint();
