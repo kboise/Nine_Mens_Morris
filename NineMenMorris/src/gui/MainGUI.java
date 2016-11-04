@@ -57,6 +57,7 @@ public class MainGUI extends JFrame {
         			}
         		} else if ( boardPanel.gameEngine.inRemoveMode() && !boardPanel.gameEngine.gameOver()) {
         			modeStatus.setForeground(Color.BLUE);
+        			//modeStatus.setFont(new Font(modeStatus.getFont().getName(), Font.BOLD, 30));
         			modeStatus.setText("Mill forms, Please Remove");
         		} else {
         			modeStatus.setForeground(Color.BLACK);
@@ -90,8 +91,9 @@ public class MainGUI extends JFrame {
         turnsStatus = new JLabel("");
         modeStatus = new JLabel("");
 		turnsStatus.setFont(new Font(Font.DIALOG_INPUT, Font.BOLD, 30));
-		modeStatus.setFont(new Font(Font.DIALOG, Font.LAYOUT_NO_LIMIT_CONTEXT, 30));
+		modeStatus.setFont(new Font(modeStatus.getFont().getName(), Font.PLAIN, 30));
 		turnsStatus.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		modeStatus.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		bottomBar.add(turnsStatus);
 		bottomBar.add(modeStatus);
         add(bottomBar, BorderLayout.SOUTH);
@@ -100,7 +102,7 @@ public class MainGUI extends JFrame {
 
     public static void main(String[] args) {
         JFrame game = new MainGUI();
-        game.setSize(900, 700);
+        game.setSize(950, 700);
         game.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         game.setVisible(true);
  
