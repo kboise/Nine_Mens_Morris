@@ -3,6 +3,7 @@ package board;
 public class Cell {
     public String label = "xx";
     public int index = -1;
+
     //private int millCount = 0;       // Number of Mills to which a cell belongs
     public boolean rowMill;
     public boolean columnMill;
@@ -51,6 +52,7 @@ public class Cell {
     public void setInvalid() { state = CellState.INVALID; }
     
     public boolean isEmpty() { return (state == CellState.EMPTY); }
+
     public void setEmpty() { state = CellState.EMPTY; clearOwner(); }
     
     public boolean isOccupied() { return (state == CellState.OCCUPIED); }

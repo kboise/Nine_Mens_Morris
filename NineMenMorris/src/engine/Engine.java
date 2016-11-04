@@ -22,7 +22,10 @@ public class Engine {
         cBoard.getMillOwnedCells(p, true);
     }
     
-    //public void doPrint() { doPrint(""); }
+    public Player getActivePlayer() { return activePlayer; }
+    
+    public Board getBoard(){ return cBoard; }
+
     public void doPrint(String str) {
         System.out.println();        
         printStats(activePlayer);

@@ -181,7 +181,7 @@ public class Board {
      * @param boardCol: integer type column# (base-1)
      * @return: referenced board cell 
      */
-    private Cell getCell(int boardRow, int boardCol) {
+    public Cell getCell(int boardRow, int boardCol) {
         Cell cell = null;
         
         if (isValidCellAddr(boardRow, boardCol)) {
@@ -190,7 +190,7 @@ public class Board {
         return cell;
     }
     
-    private Cell getCell(String cellAddr) { return getCell(getRow(cellAddr), getCol(cellAddr));}
+    public Cell getCell(String cellAddr) { return getCell(getRow(cellAddr), getCol(cellAddr));}
     
     /* Useful for console printing of a character a certain number of times */
     private static final String repeatChar(char c, int length) {
@@ -445,7 +445,7 @@ public class Board {
         
         return cellLabels;
     }
-
+    
     /*
      * Given a cell address, get comma-separated list of available neighboring cells
      * into which player's mark at cell-address can move
@@ -562,7 +562,6 @@ public class Board {
         } else {
             if (doPrint) System.out.println("Board.getMillOwnedCells():: Player-? is NULL");
         }
-        
         return cellLabels;
     }
 }
