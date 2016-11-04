@@ -51,6 +51,7 @@ public class Debug {
         
         game.remove("d2");
         
+        /*
         plays = "d3,d2,c3,e3,c4,c5,b4,a4,a7,d7,f4".split(",");
         for (int i = 0; i < plays.length; i++) {
             game.place(plays[i]);
@@ -60,6 +61,7 @@ public class Debug {
         game.move("f4", "f6");
         game.move("g4", "g1");
         game.remove("f6");
+        */
     }
     
     public static void autoRun_v2() {
