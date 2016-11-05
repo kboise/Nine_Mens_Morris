@@ -42,10 +42,10 @@ public class MainGUI extends JFrame {
         		if ( boardPanel.gameEngine.gameOver()) {
         			 if (boardPanel.gameEngine.getActivePlayer() == boardPanel.gameEngine.p1) {
         				 modeStatus.setForeground(Color.CYAN);
-        				 modeStatus.setText("Congrats!!! Black win!!!");
+        				 modeStatus.setText("Game over - Black wins!!!");
         				 turnsStatus.setText("");
         			 } else {
-        				 modeStatus.setText("Congrats!!! white win!!!");
+        				 modeStatus.setText("Game over - White wins!!!");
         				 turnsStatus.setText("");
         			 } 
         		} else if ( boardPanel.gameEngine.inMoveMode() && !boardPanel.gameEngine.inRemoveMode() ) {
@@ -53,19 +53,21 @@ public class MainGUI extends JFrame {
         				modeStatus.setForeground(Color.RED);
             			modeStatus.setText("Flying!!!!!");
         			} else { modeStatus.setForeground(Color.BLACK);
-        					 modeStatus.setText("Move");
+        					 modeStatus.setText("Mode: Moving");
         			}
         		} else if ( boardPanel.gameEngine.inRemoveMode() && !boardPanel.gameEngine.gameOver()) {
         			modeStatus.setForeground(Color.BLUE);
-        			modeStatus.setText("Mill forms, Please Remove");
+        			//modeStatus.setFont(new Font(modeStatus.getFont().getName(), Font.BOLD, 30));
+        			modeStatus.setText("Mill formed! Remove opponent");
         		} else {
         			modeStatus.setForeground(Color.BLACK);
-        			modeStatus.setText("placing");
+        			modeStatus.setText("Mode: Placing");
         		}
+        		
         		if ( !boardPanel.gameEngine.gameOver() && boardPanel.gameEngine.getActivePlayer() == boardPanel.gameEngine.p1) {
-        			turnsStatus.setText("White Markers Turn");
+        			turnsStatus.setText("Turn: White");
         		} else if ( !boardPanel.gameEngine.gameOver() ) {
-        			turnsStatus.setText("Black Markers Turn");
+        			turnsStatus.setText("Turn: Black");
         		}
         		
         		repaint();
@@ -90,8 +92,9 @@ public class MainGUI extends JFrame {
         turnsStatus = new JLabel("");
         modeStatus = new JLabel("");
 		turnsStatus.setFont(new Font(Font.DIALOG_INPUT, Font.BOLD, 30));
-		modeStatus.setFont(new Font(Font.DIALOG, Font.LAYOUT_NO_LIMIT_CONTEXT, 30));
+		modeStatus.setFont(new Font(modeStatus.getFont().getName(), Font.PLAIN, 30));
 		turnsStatus.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		modeStatus.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		bottomBar.add(turnsStatus);
 		bottomBar.add(modeStatus);
         add(bottomBar, BorderLayout.SOUTH);
@@ -100,7 +103,7 @@ public class MainGUI extends JFrame {
 
     public static void main(String[] args) {
         JFrame game = new MainGUI();
-        game.setSize(900, 700);
+        game.setSize(950, 700);
         game.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         game.setVisible(true);
  

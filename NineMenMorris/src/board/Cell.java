@@ -42,10 +42,10 @@ public class Cell {
         return isOccupied();
     }
     
-    public void clearRowMill()     { rowMill = false; }
-    public void clearColumnMill()     { columnMill = false; }
-    public void setRowMill()     { rowMill = true; }
-    public void setColumnMill()     { columnMill = true; }
+    public void clearRowMill() { rowMill = false; }
+    public void clearColumnMill() { columnMill = false; }
+    public void setRowMill() { rowMill = true; }
+    public void setColumnMill() { columnMill = true; }
     public boolean isInMill() { return (rowMill || columnMill); }
     
     public boolean isInvalid() { return (state == CellState.INVALID); }
