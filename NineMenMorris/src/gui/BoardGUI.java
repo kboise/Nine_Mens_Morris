@@ -21,13 +21,15 @@ public class BoardGUI extends JPanel {
 	private final int[] boardPoint = {9,0,1,2,14,23,22,21,9,10,3,4,1,4,5,13,14,13,20,19,22,19,18,10,11,6,7,4,7,8,12,13,12,17,16,19,16,15,11};
 	
 	
-	private String[] guiToBoardMap = {"a1", "d1", "g1",
-	                        "b2", "d2", "f2",
-	                        "c3", "d3", "e3",
-	                        "a4", "b4", "c4", "e4", "f4", "g4",
-	                        "c5", "d5", "e5",
-	                        "b6", "d6", "f6",
-	                        "a7", "d7", "g7"};
+	private String[] guiToBoardMap = {
+            "a1", "d1", "g1",
+            "b2", "d2", "f2",
+            "c3", "d3", "e3",
+            "a4", "b4", "c4", "e4", "f4", "g4",
+            "c5", "d5", "e5",
+            "b6", "d6", "f6",
+            "a7", "d7", "g7"
+        };
 	
 	public Engine gameEngine;
 
@@ -158,7 +160,7 @@ public class BoardGUI extends JPanel {
 			}	
 		
 		
-		for(int i = gameEngine.p1.placeCount; i > 0; i--){
+		for(int i = gameEngine.p1.getPlaceCount(); i > 0; i--){
 			Point coords = getPositionCoords(2);
 			g.setColor(Color.WHITE);
 			int x = coords.x + getSize().height/10 - getSize().height/30 + (9-i)%3*getSize().height/15;
@@ -166,7 +168,7 @@ public class BoardGUI extends JPanel {
 			g.fillOval(x, y, getSize().height/15, getSize().height/15);
 		}
 		
-		for(int i = gameEngine.p2.placeCount ; i > 0; i--){
+		for(int i = gameEngine.p2.getPlaceCount() ; i > 0; i--){
 				Point coords = getPositionCoords(14);
 				g.setColor(Color.BLACK);
 				int x = coords.x + getSize().height/10 - getSize().height/30 + (9-i)%3*getSize().height/15;

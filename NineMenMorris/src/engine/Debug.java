@@ -7,18 +7,33 @@ public class Debug {
     static Scanner scanner;;
     
     public static void main(String[] args) {
-        //autoRun_v1();
-        //autoRun_v2();
-        autoRun_v3();
-        //interractive();
-    }
-    
-    public static void interractive() {
         game = new Engine();
         scanner = new Scanner(System.in);
         
-        while (game.inPlaceMode()) { place(); }
+        //autoRun_v1();
+        //autoRun_v2();
+        //autoRun_v3();
+        interractive();
+    }
+    
+    
+    public static void fillAll() {
+        String [] plays = "a1,d1,g1,b2,d2,f2,c3,d3,e3,a4,b4,c4,e4,f4,g4,c5,d5,e5,b6,d6,f6,a7,d7,g7".split(",");
+        for (int i = 0; i < plays.length; i++) {
+            game.place(plays[i]);
+        }
+    }
+    
+    public static void interractive() {
+        //fillAll();
+        
+        while (game.activePlayer.isPlacing() || game.inActivePlayer.isPlacing()) {
+            place();
+            
+            if (game.activePlayer.isPlacing()) {}
+        }
         System.out.println("Done with PLACE mode");
+        
         while (game.inMoveMode()) { move(); }
     }
     
@@ -37,7 +52,12 @@ public class Debug {
     
     public static void autoRun_v3() {
         game = new Engine();
-        String[] plays = "a1,b2,d1,d2,a4,f2,g5".split(",");
+        String[] plays = "a1,b2".split(",");
+        for (int i = 0; i < plays.length; i++) {
+            game.place(plays[i]);
+        }
+        
+        plays = "d1,d2,a4,f2,g5".split(",");
         for (int i = 0; i < plays.length; i++) {
             game.place(plays[i]);
         }
@@ -51,7 +71,7 @@ public class Debug {
         
         game.remove("d2");
         
-        /*
+        
         plays = "d3,d2,c3,e3,c4,c5,b4,a4,a7,d7,f4".split(",");
         for (int i = 0; i < plays.length; i++) {
             game.place(plays[i]);
@@ -61,7 +81,6 @@ public class Debug {
         game.move("f4", "f6");
         game.move("g4", "g1");
         game.remove("f6");
-        */
     }
     
     public static void autoRun_v2() {
