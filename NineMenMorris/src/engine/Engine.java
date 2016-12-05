@@ -129,7 +129,7 @@ public class Engine {
     
     public boolean inRemoveMode() { return !gameOver() && (cellsToRemove.length() != 0); }
     public boolean inPlaceMode() { return (activePlayer.isPlacing() || inActivePlayer.isPlacing()); }
-    public boolean inMoveMode() { return !gameOver() && !inPlaceMode(); }
+    public boolean inMoveMode() { return (activePlayer.isMoving() || inActivePlayer.isMoving()); }
     
 
 
@@ -169,7 +169,6 @@ public class Engine {
                     // PLACING was successful and resulted in a Mill for activePlayer
                     //      <>-<>-<> -> Row Mill was formed
                     //      <>|<>|<> -> Column Mill was formed
-                    
                     removableCells = inActivePlayer.getNonMillCells();
                     if (removableCells.length() == 0) { removableCells = inActivePlayer.getMillCells(); }
                     if (removableCells.length() > 0) {
@@ -182,50 +181,12 @@ public class Engine {
                     activePlayer.setNextPlayState();
                     
                 } else {
-                    // Failed placeMark
+                    // Failed moveMark
                     System.out.println("PLACE:: " + msg + "; " + result);
                 }            
             }
-        }
-        
-        /*
-        if (inRemoveMode()) {
-            System.out.println("Remove for Player-" + inActivePlayer.getName() + " is pending!");
-            System.out.println("MOVE:: " + msg + "; ABORTED!");
-        } else if (inMoveMode() && activePlayer.canMove()) {
-            if (activePlayer.canFly()) {
-                vacantCells = cBoard.getVacantCells();
-            } else {
-                vacantCells = cBoard.getVacantNeighbors(srcCellAddr);
-            }
-            
-            if (!vacantCells.contains(dstCellAddr)) {
-                System.out.println("Cell-" + dstCellAddr + " not in possible move set");
-                System.out.println("MOVE:: " + msg + "; " + " FAILED");
-            } else {
-                result = cBoard.moveMark(activePlayer, srcCellAddr, dstCellAddr);
-                
-                if (result.equals("SUCCESS")) {
-                    // moveMark was successful but did not result in a Mill for activePlayer
-                    printGameInfo("MOVE:: " + msg + "; " + result);
-                    setNextPlayer();
-                } else if (result.contains(",")) {
-                    // moveMark was successful and resulted in a Mill for activePlayer
-                    // result == copy comma-separated cells to cellsToRemove
-                    setCellsToRemove();
-                    printGameInfo("MOVE:: " + msg + "; SUCCESS!");
-                    showMillNotification();
-                } else {
-                    // Failed placeMark
-                    System.out.println("MOVE:: " + msg + "; " + result);
-                }
-                
-                if (result.equals("")) { setNextPlayer(); }
-            }
-        } else if (gameOver()) { System.out.println("Game is over!!!");
         } else { System.out.println("Board not in MOVE state ->> MOVE " + msg + " FAILED!");
         }
-        */
     }
     
 

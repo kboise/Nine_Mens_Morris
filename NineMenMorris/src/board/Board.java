@@ -63,10 +63,9 @@ public class Board {
             { {7,7}, {7,4}, {0,0}, {4,7}, {0,0} }
         };
         
-        Cell currCell;
+        Cell currCell = null;
         for (int index = 0; index < adjacency.length; index++) {
             currCell = createCell(adjacency[index][0][0], adjacency[index][0][1]);
-            //currCell.index = index;             // integer index
             currCell.label = cellMap[index];    // string label
             
             currCell.left = createCell(adjacency[index][1][0], adjacency[index][1][1]);

@@ -58,7 +58,7 @@ public class Player {
     public boolean removePending() { return getCurrentPlayState() == PlayState.REMOVING; }
     
     
-    public boolean hasLost() { return !(canMove() || canPlace()); }
+    public boolean hasLost() { return (getCurrentPlayState() == PlayState.GAMEOVER); }
     public void killMan() { manCount--; }
     
     /* Print player info to console */
