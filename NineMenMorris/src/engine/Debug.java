@@ -32,6 +32,7 @@ public class Debug {
             
             if (game.activePlayer.isPlacing()) {}
         }
+        
         System.out.println("Done with PLACE mode");
         
         while (game.inMoveMode()) { move(); }

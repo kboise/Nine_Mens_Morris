@@ -20,8 +20,8 @@ public class Engine {
     public Engine() {
         cBoard = new Board();
         
-        p1 = new Player('X', 'X', MEN);
-        p2 = new Player('O', 'O', MEN);
+        p1 = new Player('1', 'X', MEN);
+        p2 = new Player('2', 'O', MEN);
         p1.opponent = p2;
         p2.opponent = p1;
         
