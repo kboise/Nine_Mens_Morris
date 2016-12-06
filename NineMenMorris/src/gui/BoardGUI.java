@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Random;
 
 import javax.swing.*;
 import javax.swing.JPanel;
@@ -208,7 +209,7 @@ public class BoardGUI extends JPanel {
 							} else if (gameEngine.activePlayer.removePending()) { 
 								gameEngine.remove(guiToBoardMap[i]);
 
-							} else if (gameEngine.activePlayer.isMoving()) {
+							} else if (gameEngine.activePlayer.isMoving() || gameEngine.activePlayer.isFlying()) {
 								if ( gameEngine.activePlayer.getOwnedCells().contains(guiToBoardMap[i]) ) {
 									selectedMoveMakerIndex = i;
 
@@ -223,7 +224,12 @@ public class BoardGUI extends JPanel {
 						
 						if (gameEngine.activePlayer == gameEngine.p2) {
 							if ( gameEngine.activePlayer.isPlacing() ) {
-								
+//								
+//								String[] dstString = gameEngine.cBoard.getVacantCells().split(", ");
+//								System.out.println(String.join(",", dstString + "good"));
+//								Random rand = new Random();
+//								int n = rand.nextInt(dstString.length);
+//								gameEngine.place(dstString[n]);
 								EngineAI currAI = new EngineAI(gameEngine);
 								currAI.placeRandom();
 
