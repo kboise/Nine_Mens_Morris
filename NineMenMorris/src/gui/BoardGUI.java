@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Random;
 
 import javax.swing.*;
 import javax.swing.JPanel;
@@ -13,6 +14,7 @@ import javax.swing.JPanel;
 import board.Board;
 import board.Cell;
 import engine.Engine;
+import engine.EngineAI;
 
 
 public class BoardGUI extends JPanel {
@@ -231,73 +233,89 @@ public class BoardGUI extends JPanel {
 						
 						if (gameEngine.activePlayer == gameEngine.p2) {
 							if ( gameEngine.activePlayer.isPlacing() ) {
-								curBoard = gameEngine.cBoard;
-								for (int j = 0; j < 24; j++){
-									temCell = curBoard.getCell(guiToBoardMap[j]);
-									if (temCell.isEmpty()){
-										gameEngine.place(guiToBoardMap[j]);
-										//repaint();
-										break;
-									}
-								}
+//								curBoard = gameEngine.cBoard;
+//								for (int j = 0; j < 24; j++){
+//									temCell = curBoard.getCell(guiToBoardMap[j]);
+//									if (temCell.isEmpty()){
+//										gameEngine.place(guiToBoardMap[j]);
+//										//repaint();
+//										break;
+//									}
+//								}
+								
+								EngineAI currAI = new EngineAI(gameEngine);
+								currAI.placeRandom();
+//								curBoard = gameEngine.cBoard;
+//								String[] dstString = gameEngine.cBoard.getVacantCells().split(",");
+//								Random rand = new Random();
+//								int n = rand.nextInt(dstString.length);
+//								gameEngine.place(dstString[n]);
 							} else if ( gameEngine.activePlayer.isMoving() ) {
-								curBoard = gameEngine.cBoard;
-								moveLoop:
-								for (int j = 0; j < 24; j++){
-									temCell = curBoard.getCell(guiToBoardMap[j]);
-									//System.out.println(temCell.right.label + temCell.left.label + temCell.bottom.label);
-									
-									if (gameEngine.p2.isOwner(temCell)&&temCell.hasOpenNeighbor()){
-										if (temCell.left != null){
-											if (temCell.left.isEmpty()){
-												gameEngine.move(guiToBoardMap[j],temCell.left.label);
-												//repaint();
-												break moveLoop;
-												}
-										}
-										if (temCell.right != null) {
-											if (temCell.right.isEmpty()){
-												gameEngine.move(guiToBoardMap[j],temCell.right.label);
-												//repaint();
-												break moveLoop;
-												}
-										}
-										if (temCell.top != null) {
-											if (temCell.top.isEmpty()){
-												gameEngine.move(guiToBoardMap[j],temCell.top.label);
-												//repaint();
-												break moveLoop;
-												}
-										}
-										if (temCell.bottom != null) {
-											if (temCell.bottom.isEmpty()){
-												gameEngine.move(guiToBoardMap[j],temCell.bottom.label);
-												//repaint();
-												break moveLoop;
-												}
-										}
-									}
-								}	
+//								curBoard = gameEngine.cBoard;
+//								moveLoop:
+//								for (int j = 0; j < 24; j++){
+//									temCell = curBoard.getCell(guiToBoardMap[j]);
+//									//System.out.println(temCell.right.label + temCell.left.label + temCell.bottom.label);
+//									
+//									if (gameEngine.p2.isOwner(temCell)&&temCell.hasOpenNeighbor()){
+//										if (temCell.left != null){
+//											if (temCell.left.isEmpty()){
+//												gameEngine.move(guiToBoardMap[j],temCell.left.label);
+//												//repaint();
+//												break moveLoop;
+//												}
+//										}
+//										if (temCell.right != null) {
+//											if (temCell.right.isEmpty()){
+//												gameEngine.move(guiToBoardMap[j],temCell.right.label);
+//												//repaint();
+//												break moveLoop;
+//												}
+//										}
+//										if (temCell.top != null) {
+//											if (temCell.top.isEmpty()){
+//												gameEngine.move(guiToBoardMap[j],temCell.top.label);
+//												//repaint();
+//												break moveLoop;
+//												}
+//										}
+//										if (temCell.bottom != null) {
+//											if (temCell.bottom.isEmpty()){
+//												gameEngine.move(guiToBoardMap[j],temCell.bottom.label);
+//												//repaint();
+//												break moveLoop;
+//												}
+//										}
+//									}
+//								}
+								EngineAI currAI = new EngineAI(gameEngine);
+								currAI.moveRandom();
+								
 							} 
 							
 							if ( gameEngine.activePlayer.isFlying() ) {
 								
-								String[] srcString = gameEngine.activePlayer.getOwnedCells().split(",");
-								String[] dstString = gameEngine.cBoard.getVacantCells().split(",");
-								gameEngine.move(srcString[0], dstString[0]);
+//								String[] srcString = gameEngine.activePlayer.getOwnedCells().split(",");
+//								String[] dstString = gameEngine.cBoard.getVacantCells().split(",");
+//								gameEngine.move(srcString[0], dstString[0]);
+								EngineAI currAI = new EngineAI(gameEngine);
+								currAI.flyRandom();
 							}
 							repaint();
 							
 							if (gameEngine.activePlayer.removePending()) {
-								curBoard = gameEngine.cBoard;
-								for (int j = 0; j < 24; j++){
-									temCell = curBoard.getCell(guiToBoardMap[j]);
-									if (!temCell.isInMill() && gameEngine.p1.isOwner(temCell)){
-										gameEngine.remove(guiToBoardMap[j]);
-										repaint();
-										break;
-									}
-								}
+//								curBoard = gameEngine.cBoard;
+//								for (int j = 0; j < 24; j++){
+//									temCell = curBoard.getCell(guiToBoardMap[j]);
+//									if (!temCell.isInMill() && gameEngine.p1.isOwner(temCell)){
+//										gameEngine.remove(guiToBoardMap[j]);
+//										repaint();
+//										break;
+//									}
+//								}
+								EngineAI currAI = new EngineAI(gameEngine);
+								currAI.removeRandom();
+								repaint();
 							}	
 						}
 					}
