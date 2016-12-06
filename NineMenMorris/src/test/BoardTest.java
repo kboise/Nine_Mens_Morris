@@ -8,15 +8,15 @@ import org.junit.Test;
 import board.Board;
 import board.Player;
 
+
 public class BoardTest {
-    final int MEN = 9;
 	
 	// Test assignment of marker after the first placement
 	@Test
 	public void testMarkerAssignment(){
         Board testboard = new Board();
         
-        Player p1 = new Player('1','W', MEN);
+        Player p1 = new Player('1','W');
         
         testboard.placeMark(p1, "c5");  
         
@@ -31,7 +31,7 @@ public class BoardTest {
 		Board testBoard = new Board();
 		testBoard.printBoard();
 		
-		Player p1 = new Player('1', 'W', MEN);
+		Player p1 = new Player('1', 'W');
 		String position = "c5";
 		testBoard.placeMark(p1, position);
 		assertTrue(testBoard.getCell(position).isOccupied());
@@ -42,7 +42,7 @@ public class BoardTest {
 	public void testInValidPlacement() {
 		Board testBoard = new Board();
 		
-		Player p1 = new Player('1', 'W', MEN);
+		Player p1 = new Player('1', 'W');
 		String position = "c10";
 		assertThat(testBoard.placeMark(p1, position), CoreMatchers.is("FAILED"));
 	}
@@ -52,8 +52,8 @@ public class BoardTest {
 	public void testOwnership(){
         Board testboard = new Board();
         
-        Player p1 = new Player('1','W', MEN);
-        Player p2 = new Player('2','B', MEN);
+        Player p1 = new Player('1','W');
+        Player p2 = new Player('2','B');
         
         testboard.placeMark(p1, "c5"); 
         testboard.placeMark(p2, "c5"); 
@@ -67,7 +67,7 @@ public class BoardTest {
 	public void testHorizontalMillFormation() {
 		Board testBoard = new Board();
 		
-		Player p1 = new Player('1', 'W', MEN);
+		Player p1 = new Player('1', 'W');
 		
 		testBoard.placeMark(p1, "a1");
 		testBoard.placeMark(p1, "d1");
@@ -81,7 +81,7 @@ public class BoardTest {
 		Board testBoard = new Board();
 		testBoard.printBoard();
 		
-		Player p1 = new Player('1', 'W', MEN);
+		Player p1 = new Player('1', 'W');
 		
 		testBoard.placeMark(p1, "a1");
 		testBoard.placeMark(p1, "a4");
@@ -101,7 +101,7 @@ public class BoardTest {
 		testboard = new Board();
 		testboard.printBoard();
         
-        Player p1 = new Player('1','W', MEN);
+        Player p1 = new Player('1','W');
         
         
 	    for(int i=0;i<colLabels.length();i++){
@@ -121,4 +121,7 @@ public class BoardTest {
 	    } 
         testboard.printBoard();  
 	}
+	
+
+	
 }

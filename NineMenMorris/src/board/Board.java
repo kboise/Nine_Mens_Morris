@@ -1,13 +1,12 @@
 package board;
 
-import java.util.ArrayList;
 //import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Board {
     private int DIMENSION = 7;
     private Cell [][] board;
-    //public enum PlaceOrMoveStates { UNINITIALIZED, FAILED, SUCCESS, FORMEDMILL }
+    public enum PlaceOrMoveStates { UNINITIALIZED, FAILED, SUCCESS, FORMEDMILL }
     //private PlaceOrMoveStates boardStatus = PlaceOrMoveStates.UNINITIALIZED;
     
     /* Console print variables */
@@ -16,8 +15,6 @@ public class Board {
     private boolean ROWADDRFIRST = false;
     private String LABELS = "ABCDEFG1234567abcdefg";
     
-    private ArrayList<String> vacantCells = null;
-    
     
     /*
      * Board constructor: initialize board X-by-X grid of Cells and
@@ -25,7 +22,6 @@ public class Board {
      */
     public Board() {
         board = new Cell[DIMENSION][DIMENSION];
-        vacantCells = new ArrayList<String>();
         setNeighbors();
     }
     
@@ -63,17 +59,16 @@ public class Board {
             { {7,7}, {7,4}, {0,0}, {4,7}, {0,0} }
         };
         
-        Cell currCell = null;
+        Cell currCell;
         for (int index = 0; index < adjacency.length; index++) {
             currCell = createCell(adjacency[index][0][0], adjacency[index][0][1]);
+            currCell.index = index;             // integer index
             currCell.label = cellMap[index];    // string label
             
             currCell.left = createCell(adjacency[index][1][0], adjacency[index][1][1]);
             currCell.right = createCell(adjacency[index][2][0], adjacency[index][2][1]);
             currCell.top = createCell(adjacency[index][3][0], adjacency[index][3][1]);
             currCell.bottom = createCell(adjacency[index][4][0], adjacency[index][4][1]);
-            
-            vacantCells.add(cellMap[index]);    // Update vacant cells
         }
     }
     
@@ -204,7 +199,32 @@ public class Board {
         return new String(data);
     }
     
-
+    /*
+     * Set a given cell address as belonging to a player
+     * @param player: player of class Player
+     * @param dstCellAddr: cell coordinate, e.g. A1, C3, F4, etc.
+     * @return None
+     */
+    public String placeMark(Player player, String dstCellAddr) {
+        Cell cell = getCell(getRow(dstCellAddr), getCol(dstCellAddr));
+        String status = "FAILED"; 
+        
+        if ((cell != null) && !cell.isOccupied()) {
+            cell.setOwner(player);      // take ownership of cell
+            player.doPlace();           // update Place count
+            
+            // Check if place formed a Mill
+            status = getNewMillCells(cell, player);
+            // Comma-separated cell labels == cells that formed mill;
+            status = (status.length() == 0) ? "SUCCESS" : status;
+        } else if (cell == null) { System.out.println("Cell " + dstCellAddr + " is invalid!");
+        } else if (cell.isOccupied()) { System.out.println("Cell " + dstCellAddr + " is occupied!");
+        } else { System.out.println("PLACE:: Unhandled placeMark() error #1");
+        }
+        
+        return status;
+    }
+    
     /*
      * Search cells left/right/top/bottom direction and return the
      * edge cell in the search direction
@@ -226,7 +246,84 @@ public class Board {
         return edgeCell;
     }
 
+    /* Check if a cell is part of a mill; return String of cells belonging to Mill */
+    private String evalMill(Cell edgeCell, Player p, String direction) {
+        Cell cell = edgeCell;
+        int matchCount = 0;
+        String millCells = "";
+        //System.out.println("Starting with -- " + cell.label + "; len() + " + millCells.length());
+        
+        while((cell != null) && cell.hasOwner() && p.isOwner(cell)) {
+            matchCount += 1;
+            millCells = (millCells.length() == 0) ? cell.label : millCells + "," + cell.label;
+            
+            if (direction.equals("right")) {
+                // Left-to-right search
+                cell = cell.right;
+            } else if (direction.equals("bottom")) {
+                // Top-to-bottom search
+                cell = cell.bottom;
+            }
+        }
+
+        // Didn't form a mill; clear status
+        if (matchCount < 3) {
+            //System.out.println("[" + direction + "] ClearMill for " + edgeCell.label);
+            clearFromMill(edgeCell, direction);
+        }
+        
+        return (matchCount == 3) ? millCells : "";
+    }
     
+    /*
+     * Check if 3 board cells on the same row form a mill, else
+     * Check if 3 board cells in the same column form a mill
+     * @param cell: most recently placed cell 
+     */
+    private String getNewMillCells(Cell cell, Player p) {
+        Cell edgeCell = null;
+        String millCells = "";
+        
+        // Check for Row-Mill
+        if (millCells.length() == 0) {
+            // Check left-to-right if MILL formed on row
+            edgeCell = getEdgeCell(cell, "left");
+            millCells = evalMill(edgeCell, p, "right");
+            if (millCells.length() > 0) { setToMill(edgeCell, "right");
+            } else { clearFromMill(edgeCell, "right");
+            }
+        }
+        
+        // Check for Column-Mill if Row-Mill is not detected
+        if (millCells.length() == 0) {
+            // Check top-to-bottom if MILL formed in column
+            edgeCell = getEdgeCell(cell, "top");
+            millCells = evalMill(edgeCell, p, "bottom");
+            if (millCells.length() > 0) { setToMill(edgeCell, "bottom");
+            } else { clearFromMill(edgeCell, "bottom");
+            }
+        }
+
+        return millCells;
+    }
+    
+    /* */
+    private void setToMill(Cell edgeCell, String direction) {
+        Cell cell = edgeCell;
+        
+        while (cell != null) {
+            if (direction.equals("right")) {
+                // Go left-to-right
+                cell.setRowMill();
+                cell = cell.right;
+            } else if (direction.equals("bottom")) {
+                // Go top-to-bottom
+                cell.setColumnMill();
+                cell = cell.bottom;
+            }
+        }
+    }
+
     /* From edge cell to right/bottom, clear Mill status */
     private void clearFromMill(Cell edgeCell, String direction) {
         Cell cell = edgeCell;
@@ -244,10 +341,6 @@ public class Board {
         }
     }
 
-
-
-
-
     /*
      * Move a player's mark from one cell to another
      * @param player: player of class Player
@@ -255,29 +348,28 @@ public class Board {
      * @param dstCellAddr: destination cell coordinate, e.g. A1, C3, F4, etc.
      * @return boolean true/false for successful/failed move
      */
-    public String moveMark(Player p, String srcAddress, String dstAddress) {
-        Cell dstCell = getCell(getRow(dstAddress), getCol(dstAddress));
-        Cell srcCell = getCell(getRow(srcAddress), getCol(srcAddress));
+    public String moveMark(Player player, String srcCellAddr, String dstCellAddr) {
+        Cell dstCell = getCell(getRow(dstCellAddr), getCol(dstCellAddr));
+        Cell srcCell = getCell(getRow(srcCellAddr), getCol(srcCellAddr));
         String status = "FAILED";
         
         if ((srcCell != null) && (dstCell != null)) {
-            if (p.isOwner(srcCell) && !dstCell.isOccupied()) {
-                clearMillFormation(srcCell);    // Clear Mill formation for source
-                vacateCell(srcCell);
+            if (player.isOwner(srcCell) && !dstCell.isOccupied()) {
+                clearMillFormation(srcCell);    // clear Mill formation for source
+                dstCell.setOwner(player);       // Update destination owner
+                srcCell.setEmpty();             // Clear source owner
                 
-                occupyCell(dstCell, p);         // Update vacant cell list
-                clearMillFormation(dstCell);    // Clear Mill formation for destination
-                
-                status = millStatusCheck(dstCell, p);       // Check Mill formation status
-                
-            } else if (!p.isOwner(srcCell)) {
-                System.out.println("Wrong owner for cell " + srcAddress + "!");
+                // Check if place formed a Mill
+                status = getNewMillCells(dstCell, player);
+                status = (status.length() == 0) ? "SUCCESS" : status;
+            } else if (!player.isOwner(srcCell)) {
+                System.out.println("Wrong owner for cell " + srcCellAddr + "!");
             } else if (dstCell.isOccupied()) {
-                System.out.println("Cell " + dstAddress + " is not empty!");
+                System.out.println("Cell " + dstCellAddr + " is not empty!");
             }
         } else {
-            if (srcCell == null) { System.out.println("Cell " + srcAddress + " is invalid!");
-            } else if (dstCell == null) { System.out.println("Cell " + dstAddress + " is invalid!");
+            if (srcCell == null) { System.out.println("Cell " + srcCellAddr + " is invalid!");
+            } else if (dstCell == null) { System.out.println("Cell " + dstCellAddr + " is invalid!");
             } else { System.out.println("MOVE:: Unhandled moveMark() error #1");
             }
         }
@@ -293,9 +385,6 @@ public class Board {
             clearMillFormation(c);     // Clear mill formations
             c.setEmpty();
             p.killMan();
-            
-            setOwnedCellsGroup(p);
-            return true;
         }
         return false;
     }
@@ -309,7 +398,7 @@ public class Board {
         if (millCells.length() == 0) {
             // Check left-to-right if MILL formed on row
             edgeCell = getEdgeCell(c, "left");
-            millCells = checkMillFormation(edgeCell, c.owner, "right");
+            millCells = evalMill(edgeCell, c.owner, "right");
             if (millCells.length() > 0) { clearFromMill(edgeCell, "right"); }
         }
         
@@ -317,7 +406,7 @@ public class Board {
         if (millCells.length() == 0) {
             // Check top-to-bottom if MILL formed in column
             edgeCell = getEdgeCell(c, "top");
-            millCells = checkMillFormation(edgeCell, c.owner, "bottom");
+            millCells = evalMill(edgeCell, c.owner, "bottom");
             if (millCells.length() > 0) { clearFromMill(edgeCell, "bottom"); }
         }
     }
@@ -383,22 +472,39 @@ public class Board {
      * - can be used in determining possible Place locations
      * - can be used in determining possible Move locations when a player can fly
      */
-    public String getVacantCells() { return String.join(", ", vacantCells); }
+    public String getVacantCells() {
+        String cellLabels = "";
+        Cell c;
+        
+        for (int i = 0; i < DIMENSION; i++) {
+            for (int j = 0; j < DIMENSION; j++) {
+                c = board[i][j];
+                
+                if ((c != null) && c.isEmpty()) {
+                    cellLabels = (cellLabels.length() == 0) ? c.label : cellLabels + "," + c.label;
+                }
+            }
+        }
+        
+        System.out.println("Board.getVacantCells():: Board has vacant cell(s): \"" + cellLabels.replace(",", ", ") + "\"");
+        return cellLabels;
+    }
 
-    /* Remove an addressed cell from vacant Cells list */
-    public void occupyCell(Cell c, Player p) { c.setOccupied(p); vacantCells.remove(c.label); }
-    /* Add back an addressed cell to vacant Cells list */
-    public void vacateCell(Cell c) { c.setEmpty(); vacantCells.add(c.label); }
-    
-    
-    
     /* Get all cells belonging to player p */
     public String getOwnedCells(Player p, boolean doPrint) {
         String cellLabels = "";
         Cell c;
         
         if (p != null) {
-            cellLabels = p.getOwnedCells();
+            for (int i = 0; i < DIMENSION; i++) {
+                for (int j = 0; j < DIMENSION; j++) {
+                    c = board[i][j];
+                    
+                    if (p.isOwner(c)) {
+                        cellLabels = (cellLabels.length() == 0) ? c.label : cellLabels + "," + c.label;
+                    }
+                }
+            }
             
             if (doPrint) System.out.println("Board.getOwnedCells():: Player-" + p.getName() + " owns cell(s): \"" + cellLabels.replace(",", ", ") + "\"");
         } else {
@@ -450,146 +556,4 @@ public class Board {
         }
         return cellLabels;
     }
-    
-    
-    /*************************************************************************************/
-    // REFACTORED METHODS (11/29/2016)
-    /*************************************************************************************/
-    
-    private String millStatusCheck(Cell c, Player p) {
-        String status = "";
-        
-        // Check if most recent action formed a Mill
-        status = getMillCells(c, p);
-        // Non-empty delimited string == cells that formed mill;
-        if (status.length() == 0){ status = "SUCCESS"; }
-        
-        return status;
-    }
-    /* Set a given cell address as belonging to a player
-     * @param player: player of class Player
-     * @param dstCellAddr: cell coordinate, e.g. A1, C3, F4, etc.
-     * @return None
-     */
-    public String placeMark(Player p, String cellAddr) {
-        Cell c = getCell(getRow(cellAddr), getCol(cellAddr));
-        String status = "FAILED";
-        
-        if ( (c != null) && !c.isOccupied() ) {
-            occupyCell(c, p);       // Update vacant cell list
-            p.doPlace();            // Update Place count
-            status = millStatusCheck(c, p);     // Check Mill formation status
-            
-        } else if (c == null) { System.out.println("Cell " + cellAddr + " is invalid!");
-        } else if (c.isOccupied()) { System.out.println("Cell " + cellAddr + " is occupied!");
-        } else { System.out.println("PLACE:: Unhandled placeMark() error #1");
-        }
-        
-        return status;
-    }
-    
-    /* Check if a cell is part of a mill; return String of cells belonging to Mill */
-    private String checkMillFormation(Cell edgeCell, Player p, String direction) {
-        Cell cell = edgeCell;
-        ArrayList<String> millCells = new ArrayList<String>();
-        
-        while((cell != null) && cell.isOccupied() && p.isOwner(cell)) {
-            millCells.add(cell.label);
-            
-            if (direction.equals("right")) {
-                // Left-to-right search
-                cell = cell.right;
-            } else if (direction.equals("bottom")) {
-                // Top-to-bottom search
-                cell = cell.bottom;
-            }
-        }
-
-        String millCellsString = "";
-        if (millCells.size() < 3) {
-            // Didn't form a mill; clear mill status of adjoining cells 
-            clearFromMill(edgeCell, direction);
-            millCells = new ArrayList<String>();
-        } else if (millCells.size() == 3) {
-            if (direction.equals("right")) {
-                millCellsString = String.join("-", millCells);
-                System.out.println("Row MILL was formed with cells \"" + millCellsString + "\"");
-            } else if (direction.equals("bottom")) {
-                millCellsString = String.join("|", millCells);
-                System.out.println("Column MILL was formed with cells \"" + millCellsString + "\"");
-            }
-            setToMill(edgeCell, direction);
-        }
-        
-        return millCellsString;
-    }
-    
-    /* Check if 3 board cells on the same row form a mill, else
-     * Check if 3 board cells in the same column form a mill
-     * @param cell: most recently placed cell 
-     */
-    private String getMillCells(Cell cell, Player p) {
-        Cell edgeCell = null;
-        String millCells = "";
-        
-        // Check for Row-Mill
-        edgeCell = getEdgeCell(cell, "left");
-        // Check left-to-right if MILL formed on row
-        millCells = checkMillFormation(edgeCell, p, "right");
-        if (millCells.length() > 0) {
-            //System.out.println("Row mill check result = \"" + millCells + "\"");
-            return millCells;
-        }
-        
-        // Check for Column-Mill
-        edgeCell = getEdgeCell(cell, "top");
-        // Check top-to-bottom if MILL formed in column
-        millCells = checkMillFormation(edgeCell, p, "bottom");
-            
-        if (millCells.length() > 0) {
-            //System.out.println("Column mill check result = \"" + millCells + "\"");
-            return millCells;
-        }
-        
-        return "";
-    }
-    
-    /* */
-    private void setToMill(Cell edgeCell, String direction) {
-        Cell cell = edgeCell;
-        
-        while (cell != null) {
-            if (direction.equals("right")) {
-                // Go left-to-right
-                cell.setRowMill();
-                cell = cell.right;
-            } else if (direction.equals("bottom")) {
-                // Go top-to-bottom
-                cell.setColumnMill();
-                cell = cell.bottom;
-            }
-        }
-    }
-
-    public String setOwnedCellsGroup(Player p) {
-        Cell c = null;
-        String[] ownedCells = p.getOwnedCells().split(", ");
-        ArrayList<String> millCells = new ArrayList<String>(); 
-        ArrayList<String> nonMillCells = new ArrayList<String>(); 
-        
-        for (int i = 0; i < ownedCells.length; i++) {
-            c = getCell(getRow(ownedCells[i]), getCol(ownedCells[i]));
-            
-            if (c != null) {
-                if (c.isInMill()) { millCells.add(c.label);
-                } else { nonMillCells.add(c.label);
-                }
-            }
-        }
-        
-        p.setMillCells(millCells);
-        p.setNonMillCells(nonMillCells);
-        return String.join(",", nonMillCells) + "*" + String.join(",", millCells);
-    }
-    
 }
