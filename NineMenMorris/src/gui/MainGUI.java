@@ -141,8 +141,6 @@ public class MainGUI extends JFrame {
         	}
         });
 
-        
-       
         turnsStatus = new JLabel("");
         modeStatus = new JLabel("");
 		turnsStatus.setFont(new Font(Font.DIALOG_INPUT, Font.BOLD, 30));

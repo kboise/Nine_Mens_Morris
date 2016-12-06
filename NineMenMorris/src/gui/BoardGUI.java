@@ -6,13 +6,10 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Random;
 
 import javax.swing.*;
 import javax.swing.JPanel;
 
-import board.Board;
-import board.Cell;
 import engine.Engine;
 import engine.EngineAI;
 
@@ -35,11 +32,8 @@ public class BoardGUI extends JPanel {
 	
 	public Engine gameEngine;
 	public int isAIMode = 0;
-
 	private int selectedMoveMakerIndex = -1;
-	
 
-	
 	public BoardGUI() {
 	    gameEngine = new Engine();
 		addMouseListener(new Controller());
@@ -112,13 +106,12 @@ public class BoardGUI extends JPanel {
 					g.setColor(Color.CYAN);
 					Point coords = getPositionCoords(i);
 					
-					//g.fillOval(coords.x - 20, coords.y - 20, 40, 40);
 					g.fillOval(coords.x - getSize().height/30, coords.y - getSize().height/30, getSize().height/15, getSize().height/15);
 					Graphics2D g2 = (Graphics2D) g;
 					// Draw pieces boundary
 					g2.setStroke(new BasicStroke(getSize().height/400));
 					g2.setColor(Color.gray);
-					//g2.drawOval(coords.x - 20, coords.y - 20, 40, 40);
+
 					g2.drawOval(coords.x - getSize().height/30, coords.y - getSize().height/30, getSize().height/15, getSize().height/15);
 				} else {
 				    
@@ -128,13 +121,12 @@ public class BoardGUI extends JPanel {
     					
     					Point coords = getPositionCoords(i);
     					
-    					//g.fillOval(coords.x - 20, coords.y - 20, 40, 40);
     					g.fillOval(coords.x - getSize().height/30, coords.y - getSize().height/30, getSize().height/15, getSize().height/15);
     					Graphics2D g2 = (Graphics2D) g;
     					// Draw pieces boundary
     					g2.setStroke(new BasicStroke(getSize().height/400));
     					g2.setColor(Color.gray);
-    					//g2.drawOval(coords.x - 20, coords.y - 20, 40, 40);
+
     					g2.drawOval(coords.x - getSize().height/30, coords.y - getSize().height/30, getSize().height/15, getSize().height/15);
     				} else if( gameEngine.p2.getOwnedCells().contains(guiToBoardMap[i]) ){
     					g.setColor(Color.BLACK);
@@ -178,8 +170,6 @@ public class BoardGUI extends JPanel {
 			return;
 		}
 			
-			Board curBoard;
-			Cell temCell;
 			int x = e.getX();
 			int y = e.getY();
 			
@@ -192,19 +182,19 @@ public class BoardGUI extends JPanel {
 					if (isAIMode == 0){
 						if (gameEngine.activePlayer.isPlacing()) {
 							gameEngine.place(guiToBoardMap[i]);
-							//repaint();
+				
 						} else if (gameEngine.activePlayer.removePending()) { 
 							gameEngine.remove(guiToBoardMap[i]);
-							//repaint();
+	
 						} else if (gameEngine.activePlayer.isMoving() || gameEngine.activePlayer.isFlying()) {
-//							if (gameEngine.getBoard().getCell(guiToBoardMap[i]).owner == gameEngine.getActivePlayer()) {
+
 							if (gameEngine.activePlayer.getOwnedCells().contains(guiToBoardMap[i])) {
 								selectedMoveMakerIndex = i;
-								//repaint();
+
 							} else if (selectedMoveMakerIndex != -1) { 
 								gameEngine.move(guiToBoardMap[selectedMoveMakerIndex], guiToBoardMap[i]);
 							    selectedMoveMakerIndex = -1;
-							    //repaint();
+
 							}
 						} 
 						repaint();
@@ -214,18 +204,18 @@ public class BoardGUI extends JPanel {
 						if (gameEngine.activePlayer == gameEngine.p1){
 							if (gameEngine.activePlayer.isPlacing()) {
 								gameEngine.place(guiToBoardMap[i]);
-								//repaint();
+
 							} else if (gameEngine.activePlayer.removePending()) { 
 								gameEngine.remove(guiToBoardMap[i]);
-								//repaint();
+
 							} else if (gameEngine.activePlayer.isMoving()) {
 								if ( gameEngine.activePlayer.getOwnedCells().contains(guiToBoardMap[i]) ) {
 									selectedMoveMakerIndex = i;
-									//repaint();
+
 								} else if (selectedMoveMakerIndex != -1) { 
 									gameEngine.move(guiToBoardMap[selectedMoveMakerIndex], guiToBoardMap[i]);
 								    selectedMoveMakerIndex = -1;
-								    //repaint();
+
 								}
 							}
 							repaint();
@@ -233,86 +223,24 @@ public class BoardGUI extends JPanel {
 						
 						if (gameEngine.activePlayer == gameEngine.p2) {
 							if ( gameEngine.activePlayer.isPlacing() ) {
-//								curBoard = gameEngine.cBoard;
-//								for (int j = 0; j < 24; j++){
-//									temCell = curBoard.getCell(guiToBoardMap[j]);
-//									if (temCell.isEmpty()){
-//										gameEngine.place(guiToBoardMap[j]);
-//										//repaint();
-//										break;
-//									}
-//								}
 								
 								EngineAI currAI = new EngineAI(gameEngine);
 								currAI.placeRandom();
-//								curBoard = gameEngine.cBoard;
-//								String[] dstString = gameEngine.cBoard.getVacantCells().split(",");
-//								Random rand = new Random();
-//								int n = rand.nextInt(dstString.length);
-//								gameEngine.place(dstString[n]);
+
 							} else if ( gameEngine.activePlayer.isMoving() ) {
-//								curBoard = gameEngine.cBoard;
-//								moveLoop:
-//								for (int j = 0; j < 24; j++){
-//									temCell = curBoard.getCell(guiToBoardMap[j]);
-//									//System.out.println(temCell.right.label + temCell.left.label + temCell.bottom.label);
-//									
-//									if (gameEngine.p2.isOwner(temCell)&&temCell.hasOpenNeighbor()){
-//										if (temCell.left != null){
-//											if (temCell.left.isEmpty()){
-//												gameEngine.move(guiToBoardMap[j],temCell.left.label);
-//												//repaint();
-//												break moveLoop;
-//												}
-//										}
-//										if (temCell.right != null) {
-//											if (temCell.right.isEmpty()){
-//												gameEngine.move(guiToBoardMap[j],temCell.right.label);
-//												//repaint();
-//												break moveLoop;
-//												}
-//										}
-//										if (temCell.top != null) {
-//											if (temCell.top.isEmpty()){
-//												gameEngine.move(guiToBoardMap[j],temCell.top.label);
-//												//repaint();
-//												break moveLoop;
-//												}
-//										}
-//										if (temCell.bottom != null) {
-//											if (temCell.bottom.isEmpty()){
-//												gameEngine.move(guiToBoardMap[j],temCell.bottom.label);
-//												//repaint();
-//												break moveLoop;
-//												}
-//										}
-//									}
-//								}
+
 								EngineAI currAI = new EngineAI(gameEngine);
 								currAI.moveRandom();
 								
-							} 
-							
-							if ( gameEngine.activePlayer.isFlying() ) {
+							} else if ( gameEngine.activePlayer.isFlying() ) {
 								
-//								String[] srcString = gameEngine.activePlayer.getOwnedCells().split(",");
-//								String[] dstString = gameEngine.cBoard.getVacantCells().split(",");
-//								gameEngine.move(srcString[0], dstString[0]);
 								EngineAI currAI = new EngineAI(gameEngine);
 								currAI.flyRandom();
 							}
 							repaint();
 							
 							if (gameEngine.activePlayer.removePending()) {
-//								curBoard = gameEngine.cBoard;
-//								for (int j = 0; j < 24; j++){
-//									temCell = curBoard.getCell(guiToBoardMap[j]);
-//									if (!temCell.isInMill() && gameEngine.p1.isOwner(temCell)){
-//										gameEngine.remove(guiToBoardMap[j]);
-//										repaint();
-//										break;
-//									}
-//								}
+
 								EngineAI currAI = new EngineAI(gameEngine);
 								currAI.removeRandom();
 								repaint();
