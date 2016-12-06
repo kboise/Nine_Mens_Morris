@@ -14,7 +14,6 @@ import java.awt.event.ActionListener;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import board.Player;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -32,7 +31,7 @@ public class MainGUI extends JFrame {
     private JLabel turnsStatus;
     private JLabel modeStatus;
     private final String[] messageStrings = {"Human","Computer"};
-    private int isAIMode = 0;
+
     JComboBox cmbMessageList = new JComboBox(messageStrings);
     
     @SuppressWarnings("serial")
@@ -72,10 +71,10 @@ public class MainGUI extends JFrame {
         		case GAMEOVER: 
         			if (boardPanel.gameEngine.p2.hasLost()) {
         				modeStatus.setForeground(Color.RED);
-        				modeStatus.setText("Game over - Black wins!!!");
+        				modeStatus.setText("Game over - White wins!!!");
         				turnsStatus.setText("");
         			} else {
-        				modeStatus.setText("Game over - White wins!!!");
+        				modeStatus.setText("Game over - Black wins!!!");
         				turnsStatus.setText("");
         			} 
         			break;
