@@ -10,6 +10,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.*;
 import javax.swing.JPanel;
 
+import board.Player.PlayState;
 import engine.Engine;
 import engine.EngineAI;
 
@@ -102,20 +103,50 @@ public class BoardGUI extends JPanel {
 		}
 		
 			for (int i = 0; i<24;i++) {
-				if (selectedMoveMakerIndex == i){
-					g.setColor(Color.CYAN);
-					Point coords = getPositionCoords(i);
+				if (selectedMoveMakerIndex != -1) {
+					if ( gameEngine.cBoard.getVacantCells().contains(guiToBoardMap[i]) && gameEngine.activePlayer.isMoving() && gameEngine.cBoard.getVacantNeighbors(guiToBoardMap[selectedMoveMakerIndex]).contains(guiToBoardMap[i])) {
+    					Point coords = getPositionCoords(i);
+    			        Graphics2D g2d = (Graphics2D) g.create();
+    			        //set the stroke of the copy, not the original 
+    			        Stroke dashed = new BasicStroke(getSize().height/400, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{9}, 0);
+    			        g2d.setStroke(dashed);
+    					//Graphics2D g2 = (Graphics2D) g;
+    					// Draw pieces boundary
+    					//g2d.setStroke(new BasicStroke(getSize().height/400));
+    					g2d.setColor(Color.RED);
+    					g2d.drawOval(coords.x - getSize().height/30, coords.y - getSize().height/30, getSize().height/15, getSize().height/15);
+    					g2d.dispose();	
+					}
 					
+					if ( gameEngine.activePlayer.isFlying() && gameEngine.cBoard.getVacantCells().contains(guiToBoardMap[i])) {
+    					Point coords = getPositionCoords(i);
+    					
+    			        Graphics2D g2d = (Graphics2D) g.create();
+
+    			        //set the stroke of the copy, not the original 
+    			        Stroke dashed = new BasicStroke(getSize().height/400, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{9}, 0);
+    			        g2d.setStroke(dashed);
+    					//Graphics2D g2 = (Graphics2D) g;
+    					// Draw pieces boundary
+    					//g2.setStroke(new BasicStroke(getSize().height/400));
+    					g2d.setColor(Color.RED);
+    					g2d.drawOval(coords.x - getSize().height/30, coords.y - getSize().height/30, getSize().height/15, getSize().height/15);
+    					g2d.dispose();
+					}
+				}
+				
+				if (selectedMoveMakerIndex == i){
+					g.setColor(Color.GRAY);
+					Point coords = getPositionCoords(i);					
 					g.fillOval(coords.x - getSize().height/30, coords.y - getSize().height/30, getSize().height/15, getSize().height/15);
 					Graphics2D g2 = (Graphics2D) g;
 					// Draw pieces boundary
 					g2.setStroke(new BasicStroke(getSize().height/400));
 					g2.setColor(Color.gray);
-
 					g2.drawOval(coords.x - getSize().height/30, coords.y - getSize().height/30, getSize().height/15, getSize().height/15);
 				} else {
 				    
-				    if (gameEngine.p1.getOwnedCells().contains(guiToBoardMap[i])){
+				    if (gameEngine.p1.getOwnedCells().contains(guiToBoardMap[i])) {
     					
     					g.setColor(Color.WHITE);
     					
@@ -128,7 +159,7 @@ public class BoardGUI extends JPanel {
     					g2.setColor(Color.gray);
 
     					g2.drawOval(coords.x - getSize().height/30, coords.y - getSize().height/30, getSize().height/15, getSize().height/15);
-    				} else if( gameEngine.p2.getOwnedCells().contains(guiToBoardMap[i]) ){
+    				} else if( gameEngine.p2.getOwnedCells().contains(guiToBoardMap[i]) ) {
     					g.setColor(Color.BLACK);
     					Point coords = getPositionCoords(i);
     					
@@ -140,8 +171,23 @@ public class BoardGUI extends JPanel {
     					g2.setColor(Color.gray);
     					//g2.drawOval(coords.x - 20, coords.y - 20, 40, 40);
     					g2.drawOval(coords.x - getSize().height/30, coords.y - getSize().height/30, getSize().height/15, getSize().height/15);
-    				}
+    				} 
                 }
+			
+			if (gameEngine.activePlayer.removePending() && gameEngine.activePlayer.opponent.getRemovableCells().contains(guiToBoardMap[i])) {
+				Point coords = getPositionCoords(i);
+		        Graphics2D g2d = (Graphics2D) g.create();
+		        //set the stroke of the copy, not the original 
+		        Stroke dashed = new BasicStroke(getSize().height/200, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{9}, 0);
+		        g2d.setStroke(dashed);
+				//Graphics2D g2 = (Graphics2D) g;
+				// Draw pieces boundary
+				//g2d.setStroke(new BasicStroke(getSize().height/400));
+				g2d.setColor(Color.RED);
+				g2d.drawOval(coords.x - getSize().height/30, coords.y - getSize().height/30, getSize().height/15, getSize().height/15);
+				g2d.dispose();	
+			}
+			
 			}	
 		
 		
