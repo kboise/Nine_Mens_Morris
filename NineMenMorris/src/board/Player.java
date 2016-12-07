@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 public class Player {
     private final int MEN = 9;
-    
+    public boolean lost = false;
     private String mark = "";
     private String name = "";
     private int placeCount = MEN;
@@ -58,7 +58,7 @@ public class Player {
     public boolean removePending() { return getCurrentPlayState() == PlayState.REMOVING; }
     
     
-    public boolean hasLost() { return (manCount < 3); }
+    public boolean hasLost() { return (manCount < 3 || lost ); }
     public void killMan() { manCount--; }
     
     /* Print player info to console */
