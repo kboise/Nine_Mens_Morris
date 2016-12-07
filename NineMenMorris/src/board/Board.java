@@ -291,7 +291,7 @@ public class Board {
         
         if (c.isOccupied() && p.isOwner(c)) {
             clearMillFormation(c);     // Clear mill formations
-            c.setEmpty();
+            //c.setEmpty();
             vacateCell(c);
             p.killMan();           
             setOwnedCellsGroup(p);

@@ -231,7 +231,8 @@ public class BoardGUI extends JPanel {
 //								int n = rand.nextInt(dstString.length);
 //								gameEngine.place(dstString[n]);
 								EngineAI currAI = new EngineAI(gameEngine);
-								currAI.placeRandom();
+								String evalDst = currAI.evalPlace();
+								gameEngine.place(evalDst);
 
 							} else if ( gameEngine.activePlayer.isMoving() ) {
 

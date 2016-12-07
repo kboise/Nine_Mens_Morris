@@ -1,6 +1,7 @@
 package engine;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 import board.Board;
@@ -8,7 +9,11 @@ import board.Cell;
 
 public class EngineAI {
 	private Engine engine;
-	
+	private final String[][] millString = {{"a1", "d1", "g1"}, {"b2", "d2", "f2"}, {"c3", "d3", "e3"}, {"a4", "b4", "c4"}, 
+			{"e4", "f4", "g4"}, {"c5", "d5", "e5"}, {"b6", "d6", "f6"}, {"a7", "d7", "g7"},
+			{"a1", "a4", "a7"}, {"b2", "b4", "b6"}, {"c3", "c4", "c5"}, {"d1", "d2", "d3"}, 
+			{"d5", "d6", "d7"}, {"e3", "e4", "e5"}, {"f2", "f4", "f6"}, {"g1", "g4", "g7"}};
+
 	public EngineAI(Engine engine) {
 		this.engine = engine;
 	}
@@ -89,6 +94,58 @@ public class EngineAI {
 		Random randgen = new Random();
 		int n = randgen.nextInt(rmString.size());
 		engine.remove(rmString.get(n));
+	}
+	
+	public String evalPlace() {
+		final String ownString = engine.activePlayer.getOwnedCells();
+		final String oppString = engine.activePlayer.opponent.getOwnedCells();
+		String[] emptyString = engine.cBoard.getVacantCells().split(", ");
+		Random rand = new Random();
+		int n = rand.nextInt(emptyString.length);
+		String dstCell = null;
+		int count = 0;
+		
+		for(String[] mills : millString) {
+			count = 0;
+			
+			for(String cell : mills) {
+				if (ownString.contains(cell)) {
+					count = count + 1;
+				} else if (!oppString.contains(cell)){
+					dstCell = cell;
+				}
+			}
+			
+			if (count == 2 && dstCell != null) {
+				System.out.println(dstCell + "*****1*****");
+				return dstCell;
+			}
+		}
+		
+		dstCell = null;
+		for(String[] mills : millString) {
+			count = 0;
+
+			for(String cell : mills) {
+				if (oppString.contains(cell)) {
+					count = count + 1;
+				} else if (!ownString.contains(cell)){
+					System.out.println(dstCell);
+					dstCell = cell;
+				}
+			}
+			
+			if (count == 2 && dstCell !=null) {
+				System.out.println(dstCell + "*****2*****");
+				return dstCell;
+			}
+		}
+		
+		dstCell = null;
+		dstCell = emptyString[n];
+		System.out.println(dstCell + "*****3*****");
+		return dstCell;
+		
 	}
 	
 }
