@@ -58,7 +58,7 @@ public class Player {
     public boolean removePending() { return getCurrentPlayState() == PlayState.REMOVING; }
     
     
-    public boolean hasLost() { return (getCurrentPlayState() == PlayState.GAMEOVER); }
+    public boolean hasLost() { return (manCount < 3); }
     public void killMan() { manCount--; }
     
     /* Print player info to console */
@@ -151,13 +151,20 @@ public class Player {
                 // Check that game is not yet over
                 nextState = PlayState.GAMEOVER;
             } else {
-                // Go back to previous state
-                nextState = prevState;
+                if (prevState == PlayState.PLACING && !canPlace()) {
+                	nextState = PlayState.MOVING;// Go back to previous state
+                } else if (prevState == PlayState.MOVING && canFly()) {
+                	nextState = PlayState.FLYING;
+                } else {
+                	nextState = prevState;
+                }
             }
         } else if (state == PlayState.FLYING) {
             if (opponent.killPending) {
                 // Formed a MILL, remove opponent's man
                 nextState = PlayState.REMOVING;
+            } else if (hasLost()){
+            	nextState = PlayState.GAMEOVER;
             } else {
                 // Remain in MOVE state
                 nextState = PlayState.FLYING;

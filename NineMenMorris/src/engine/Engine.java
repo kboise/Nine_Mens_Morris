@@ -113,6 +113,7 @@ public class Engine {
             
             printGameInfo("REMOVE:: " + msg);
             activePlayer.setNextPlayState();
+            activePlayer.opponent.setNextPlayState();
             setNextPlayer();
         } else {
             System.out.println("\nRemove FAILED; " + dstCellAddr + " not part of valid cells to remove");
@@ -145,7 +146,7 @@ public class Engine {
         String removableCells = "";
         String vacantCells = "";
         
-        if ( activePlayer.isMoving() ) {
+        if ( activePlayer.isMoving() || activePlayer.isFlying() ) {
             if (activePlayer.canFly()) {
                 vacantCells = cBoard.getVacantCells();
             } else {

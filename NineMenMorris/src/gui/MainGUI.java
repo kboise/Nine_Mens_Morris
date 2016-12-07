@@ -13,8 +13,11 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+
+
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 
 
@@ -27,6 +30,9 @@ public class MainGUI extends JFrame {
     private JButton startGameButton;
     private JLabel turnsStatus;
     private JLabel modeStatus;
+    private final String[] messageStrings = {"Human","Computer"};
+
+    JComboBox cmbMessageList = new JComboBox(messageStrings);
     
     @SuppressWarnings("serial")
 	public MainGUI() {
@@ -39,29 +45,58 @@ public class MainGUI extends JFrame {
         	@Override
         	protected void paintComponent(Graphics g){
         		super.paintComponent(g);
-        		if ( boardPanel.gameEngine.gameOver()) {
-        			 if (boardPanel.gameEngine.getActivePlayer() == boardPanel.gameEngine.p1) {
-        				 modeStatus.setForeground(Color.CYAN);
-        				 modeStatus.setText("Game over - Black wins!!!");
-        				 turnsStatus.setText("");
-        			 } else {
-        				 modeStatus.setText("Game over - White wins!!!");
-        				 turnsStatus.setText("");
-        			 } 
-        		} else if ( boardPanel.gameEngine.inMoveMode() && !boardPanel.gameEngine.inRemoveMode() ) {
-        			if (boardPanel.gameEngine.getActivePlayer().canFly()) {
+//        		if ( boardPanel.gameEngine.gameOver()) {
+//        			 if (boardPanel.gameEngine.p2.hasLost()) {
+//        				 modeStatus.setForeground(Color.RED);
+//        				 modeStatus.setText("Game over - Black wins!!!");
+//        				 turnsStatus.setText("");
+//        			 } else {
+//        				 modeStatus.setText("Game over - White wins!!!");
+//        				 turnsStatus.setText("");
+//        			 } 
+//        		}  else if ( boardPanel.gameEngine.activePlayer.isFlying() ) {        		
+//        			modeStatus.setForeground(Color.RED);
+//            		modeStatus.setText("Flying!!!!!");
+//        		} else if ( boardPanel.gameEngine.activePlayer.isMoving() ) { 
+//        			modeStatus.setForeground(Color.BLACK);
+//        			modeStatus.setText("Mode: Moving");
+//        			} else if ( boardPanel.gameEngine.activePlayer.removePending()) {
+//        			modeStatus.setForeground(Color.BLUE);
+//        			modeStatus.setText("Mill formed! Remove opponent");
+//        		} else if ( boardPanel.gameEngine.activePlayer.isPlacing()) {
+//        			modeStatus.setForeground(Color.BLACK);
+//        			modeStatus.setText("Mode: Placing");
+//        		}
+        		switch (boardPanel.gameEngine.activePlayer.getCurrentPlayState()) {
+        		case GAMEOVER: 
+        			if (boardPanel.gameEngine.p2.hasLost()) {
         				modeStatus.setForeground(Color.RED);
-            			modeStatus.setText("Flying!!!!!");
-        			} else { modeStatus.setForeground(Color.BLACK);
-        					 modeStatus.setText("Mode: Moving");
-        			}
-        		} else if ( boardPanel.gameEngine.inRemoveMode() && !boardPanel.gameEngine.gameOver()) {
+        				modeStatus.setText("Game over - White wins!!!");
+        				turnsStatus.setText("");
+        			} else {
+        				modeStatus.setText("Game over - Black wins!!!");
+        				turnsStatus.setText("");
+        			} 
+        			break;
+        		case FLYING: 
+        			modeStatus.setForeground(Color.RED);
+        			modeStatus.setText("Flying!!!!!");
+        			break;
+        		case MOVING:
+        			modeStatus.setForeground(Color.BLACK);
+        			modeStatus.setText("Mode: Moving");
+        			break;
+        		case REMOVING:
         			modeStatus.setForeground(Color.BLUE);
-        			//modeStatus.setFont(new Font(modeStatus.getFont().getName(), Font.BOLD, 30));
         			modeStatus.setText("Mill formed! Remove opponent");
-        		} else {
+        			break;
+        		case PLACING:
         			modeStatus.setForeground(Color.BLACK);
         			modeStatus.setText("Mode: Placing");
+        			break;
+        		case NOTSTARTED:
+        			break;
+        		default:
         		}
         		
         		if ( !boardPanel.gameEngine.gameOver() && boardPanel.gameEngine.getActivePlayer() == boardPanel.gameEngine.p1) {
@@ -86,17 +121,37 @@ public class MainGUI extends JFrame {
                 boardPanel.setEngine(new Engine());
             }
         });
+        
+        cmbMessageList.addActionListener(new ActionListener() {
+        	
 
-        bottomBar.add(startGameButton);
-       
+			@Override
+        	public void actionPerformed(ActionEvent e) {
+        		if (e.getSource() == cmbMessageList) {
+        			JComboBox cb = (JComboBox) e.getSource();
+        			String msg = (String) cb.getSelectedItem();
+        			switch (msg) {
+        			case "Computer": boardPanel.isAIMode = 1;
+        			break;
+        			case "Human": boardPanel.isAIMode = 0;
+        			break;
+        			default: boardPanel.isAIMode = 0;
+        			}
+        		}
+        	}
+        });
+
         turnsStatus = new JLabel("");
         modeStatus = new JLabel("");
 		turnsStatus.setFont(new Font(Font.DIALOG_INPUT, Font.BOLD, 30));
 		modeStatus.setFont(new Font(modeStatus.getFont().getName(), Font.PLAIN, 30));
 		turnsStatus.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		modeStatus.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		
+		bottomBar.add(startGameButton);
 		bottomBar.add(turnsStatus);
 		bottomBar.add(modeStatus);
+		bottomBar.add(cmbMessageList); 
         add(bottomBar, BorderLayout.SOUTH);
     }
     
