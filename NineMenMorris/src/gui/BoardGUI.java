@@ -6,7 +6,6 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Random;
 
 import javax.swing.*;
 import javax.swing.JPanel;
@@ -237,19 +236,25 @@ public class BoardGUI extends JPanel {
 							} else if ( gameEngine.activePlayer.isMoving() ) {
 
 								EngineAI currAI = new EngineAI(gameEngine);
-								currAI.moveRandom();
+								//String[] evalMov = currAI.moveRandom();
+								String[] evalMov = currAI.evalMove();
+								gameEngine.move(evalMov[0], evalMov[1]);
 								
 							} else if ( gameEngine.activePlayer.isFlying() ) {
 								
 								EngineAI currAI = new EngineAI(gameEngine);
-								currAI.flyRandom();
+								//String[] evalFly = currAI.flyRandom();
+								String[] evalFly = currAI.evalFly();
+								gameEngine.move(evalFly[0], evalFly[1]);
 							}
 							repaint();
 							
 							if (gameEngine.activePlayer.removePending()) {
 
 								EngineAI currAI = new EngineAI(gameEngine);
-								currAI.removeRandom();
+								//String evalRv = currAI.removeRandom();
+								String evalRv = currAI.evalRemove();
+								gameEngine.remove(evalRv);
 								repaint();
 							}	
 						}

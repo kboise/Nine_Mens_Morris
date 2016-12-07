@@ -136,7 +136,9 @@ public class Player {
             }
             
         } else if (state == PlayState.MOVING) {
-            if (opponent.killPending) {
+            if (hasLost()) {
+            	nextState = PlayState.GAMEOVER;
+            } else if (opponent.killPending) {
                 // Formed a MILL, remove opponent's man
                 nextState = PlayState.REMOVING;
             } else if ( canFly() ) {
