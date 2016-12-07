@@ -107,7 +107,7 @@ public class EngineAI {
 		
 		for(String[] mills : millString) {
 			count = 0;
-			
+			dstCell = null;
 			for(String cell : mills) {
 				if (ownString.contains(cell)) {
 					count = count + 1;
@@ -117,7 +117,7 @@ public class EngineAI {
 			}
 			
 			if (count == 2 && dstCell != null) {
-				System.out.println(dstCell + "*****1*****");
+				//System.out.println(dstCell + "*****1*****");
 				return dstCell;
 			}
 		}
@@ -125,25 +125,26 @@ public class EngineAI {
 		dstCell = null;
 		for(String[] mills : millString) {
 			count = 0;
-
+			dstCell = null;
 			for(String cell : mills) {
 				if (oppString.contains(cell)) {
 					count = count + 1;
+					//System.out.println(count);
 				} else if (!ownString.contains(cell)){
-					System.out.println(dstCell);
+					//System.out.println(cell);
 					dstCell = cell;
 				}
 			}
 			
 			if (count == 2 && dstCell !=null) {
-				System.out.println(dstCell + "*****2*****");
+				//System.out.println(dstCell + "*****2*****");
 				return dstCell;
 			}
 		}
 		
 		dstCell = null;
 		dstCell = emptyString[n];
-		System.out.println(dstCell + "*****3*****");
+		//System.out.println(dstCell + "*****3*****");
 		return dstCell;
 		
 	}
