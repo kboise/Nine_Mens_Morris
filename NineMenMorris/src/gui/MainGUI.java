@@ -2,6 +2,7 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -114,6 +115,8 @@ public class MainGUI extends JFrame {
         
         
         startGameButton = new JButton("Play Again");
+        startGameButton.setPreferredSize(new Dimension(200,40));
+        startGameButton.setFont(new Font(Font.DIALOG_INPUT, Font.BOLD, 25));
         startGameButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -121,7 +124,8 @@ public class MainGUI extends JFrame {
                 boardPanel.setEngine(new Engine());
             }
         });
-        
+        cmbMessageList.setPreferredSize(new Dimension(150, 30));
+        cmbMessageList.setFont(new Font(Font.DIALOG_INPUT, Font.BOLD, 25));
         cmbMessageList.addActionListener(new ActionListener() {
         	
 

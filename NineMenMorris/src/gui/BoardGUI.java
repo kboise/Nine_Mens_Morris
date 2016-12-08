@@ -10,7 +10,6 @@ import java.awt.event.MouseEvent;
 import javax.swing.*;
 import javax.swing.JPanel;
 
-import board.Player.PlayState;
 import engine.Engine;
 import engine.EngineAI;
 
@@ -191,7 +190,7 @@ public class BoardGUI extends JPanel {
 			}	
 		
 		
-		for(int i = gameEngine.p1.getPlaceCount(); i > 0; i--){
+		for(int i = gameEngine.p1.getPlaceCount(); i > 0; i--) {
 			Point coords = getPositionCoords(2);
 			g.setColor(Color.WHITE);
 			int x = coords.x + getSize().height/10 - getSize().height/30 + (9-i)%3*getSize().height/15;
@@ -199,7 +198,7 @@ public class BoardGUI extends JPanel {
 			g.fillOval(x, y, getSize().height/15, getSize().height/15);
 		}
 		
-		for(int i = gameEngine.p2.getPlaceCount() ; i > 0; i--){
+		for(int i = gameEngine.p2.getPlaceCount() ; i > 0; i--) {
 				Point coords = getPositionCoords(14);
 				g.setColor(Color.BLACK);
 				int x = coords.x + getSize().height/10 - getSize().height/30 + (9-i)%3*getSize().height/15;
@@ -235,11 +234,6 @@ public class BoardGUI extends JPanel {
 							String[] evalendMov = evalendAI.evalMove();
 							if (evalendMov[0].equals(" ") && evalendMov[1].equals(" ")) {
 								gameEngine.activePlayer.lost = true;
-								if (gameEngine.activePlayer == gameEngine.p1) {
-									gameEngine.p1.lost = true;
-								} else {
-									gameEngine.p2.lost = true;
-								}
 								gameEngine.activePlayer.setNextPlayState();
 							}
 	
@@ -257,11 +251,6 @@ public class BoardGUI extends JPanel {
 								System.out.println("****" + evalendMov[0] + "****,," + "****" + evalendMov[1] + "****");
 								if (evalendMov[0] == " " && evalendMov[1] == " ") {
 									gameEngine.activePlayer.lost = true;
-									if (gameEngine.activePlayer == gameEngine.p1) {
-										gameEngine.p1.lost = true;
-									} else {
-										gameEngine.p2.lost = true;
-									}
 									gameEngine.activePlayer.setNextPlayState();
 								}
 							}
@@ -280,11 +269,6 @@ public class BoardGUI extends JPanel {
 								String[] evalendMov = evalendAI.evalMove();
 								if (evalendMov[0].equals(" ") && evalendMov[1].equals(" ")) {
 									gameEngine.activePlayer.lost = true;
-									if (gameEngine.activePlayer == gameEngine.p1) {
-										gameEngine.p1.lost = true;
-									} else {
-										gameEngine.p2.lost = true;
-									}
 									gameEngine.activePlayer.setNextPlayState();
 								}
 
@@ -301,11 +285,6 @@ public class BoardGUI extends JPanel {
 									String[] evalMov = currAI.evalMove();
 									if (evalMov[0].equals(" ") && evalMov[1].equals(" ")) {
 										gameEngine.activePlayer.lost = true;
-										if (gameEngine.activePlayer == gameEngine.p1) {
-											gameEngine.p1.lost = true;
-										} else {
-											gameEngine.p2.lost = true;
-										}
 										gameEngine.activePlayer.setNextPlayState();
 									}
 								}
@@ -335,11 +314,6 @@ public class BoardGUI extends JPanel {
 								String[] evalendMov = evalendAI.evalMove();
 								if (evalendMov[0].equals(" ") && evalendMov[1].equals(" ")) {
 									gameEngine.activePlayer.lost = true;
-									if (gameEngine.activePlayer == gameEngine.p1) {
-										gameEngine.p1.lost = true;
-									} else {
-										gameEngine.p2.lost = true;
-									}
 									gameEngine.activePlayer.setNextPlayState();
 								}
 								
@@ -363,11 +337,6 @@ public class BoardGUI extends JPanel {
 								String[] evalendMov = evalendAI.evalMove();
 								if (evalendMov[0].equals(" ") && evalendMov[1].equals(" ")) {
 									gameEngine.activePlayer.lost = true;
-									if (gameEngine.activePlayer == gameEngine.p1) {
-										gameEngine.p1.lost = true;
-									} else {
-										gameEngine.p2.lost = true;
-									}
 									gameEngine.activePlayer.setNextPlayState();
 								}
 							}	
