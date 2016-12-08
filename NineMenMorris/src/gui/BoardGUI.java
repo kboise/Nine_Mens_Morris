@@ -254,14 +254,16 @@ public class BoardGUI extends JPanel {
 	
 						} else if (gameEngine.activePlayer.isMoving() || gameEngine.activePlayer.isFlying()) {
 							
-						    // evaluate if movable 
-						    EngineAI evalendAI = new EngineAI(gameEngine);
-							String[] evalendMov = evalendAI.evalMove();
-							if (evalendMov[0] == " " && evalendMov[1] == " ") {
-								gameEngine.activePlayer.lost = true;
-								gameEngine.activePlayer.setNextPlayState();
-								return;
 							
+						    // evaluate if movable 
+							if (gameEngine.activePlayer.isMoving()) {
+							    EngineAI evalendAI = new EngineAI(gameEngine);
+								String[] evalendMov = evalendAI.evalMove();
+								if (evalendMov[0] == " " && evalendMov[1] == " ") {
+									gameEngine.activePlayer.lost = true;
+									gameEngine.activePlayer.setNextPlayState();
+									return;
+								}
 							}
 							
 							if (gameEngine.activePlayer.getOwnedCells().contains(guiToBoardMap[i])) {
@@ -274,8 +276,8 @@ public class BoardGUI extends JPanel {
 							    repaint();
 								
 							    if (gameEngine.activePlayer.isMoving()) {
-								    evalendAI = new EngineAI(gameEngine);
-									evalendMov = evalendAI.evalMove();
+								    EngineAI evalendAI = new EngineAI(gameEngine);
+									String[] evalendMov = evalendAI.evalMove();
 									if (evalendMov[0].equals(" ") && evalendMov[1].equals(" ")) {
 										gameEngine.activePlayer.lost = true;
 										gameEngine.activePlayer.setNextPlayState();
@@ -305,13 +307,15 @@ public class BoardGUI extends JPanel {
 
 							} else if (gameEngine.activePlayer.isMoving() || gameEngine.activePlayer.isFlying()) {
 								
-							    // evaluate if movable 
-							    EngineAI evalendAI = new EngineAI(gameEngine);
-								String[] evalendMov = evalendAI.evalMove();
-								if (evalendMov[0] == " " && evalendMov[1] == " ") {
-									gameEngine.activePlayer.lost = true;
-									gameEngine.activePlayer.setNextPlayState();
-								
+								if (gameEngine.activePlayer.isMoving()) {
+								    // evaluate if movable 
+								    EngineAI evalendAI = new EngineAI(gameEngine);
+									String[] evalendMov = evalendAI.evalMove();
+									if (evalendMov[0] == " " && evalendMov[1] == " ") {
+										gameEngine.activePlayer.lost = true;
+										gameEngine.activePlayer.setNextPlayState();
+										return;
+									}
 								}
 								
 								if ( gameEngine.activePlayer.getOwnedCells().contains(guiToBoardMap[i]) ) {
@@ -329,12 +333,7 @@ public class BoardGUI extends JPanel {
 						
 						if (gameEngine.activePlayer == gameEngine.p2) {
 							if ( gameEngine.activePlayer.isPlacing() ) {
-//								
-//								String[] dstString = gameEngine.cBoard.getVacantCells().split(", ");
-//								System.out.println(String.join(",", dstString + "good"));
-//								Random rand = new Random();
-//								int n = rand.nextInt(dstString.length);
-//								gameEngine.place(dstString[n]);
+
 								EngineAI currAI = new EngineAI(gameEngine);
 								String evalDst = currAI.evalPlace();
 								gameEngine.place(evalDst);
@@ -374,6 +373,7 @@ public class BoardGUI extends JPanel {
 									if (evalendMov[0].equals(" ") && evalendMov[1].equals(" ")) {
 										gameEngine.activePlayer.lost = true;
 										gameEngine.activePlayer.setNextPlayState();
+										return;
 									
 									}
 							    }

@@ -466,6 +466,7 @@ public class EngineAI {
 		String srcCell = null;
 		int count = 0;
 		
+		// forming own mill check
 		for(String[] mills : millString) {
 			count = 0;
 			dstCell = null;
