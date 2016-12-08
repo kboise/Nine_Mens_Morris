@@ -42,6 +42,7 @@ public class BoardGUI extends JPanel {
 	
 	public void setEngine(Engine gameEngine){
 		this.gameEngine = gameEngine;
+		this.selectedMoveMakerIndex = -1;
 		repaint();
 	}
 
@@ -227,35 +228,65 @@ public class BoardGUI extends JPanel {
 					if (isAIMode == 0){
 						if (gameEngine.activePlayer.isPlacing()) {
 							gameEngine.place(guiToBoardMap[i]);
+							repaint();
+							if (gameEngine.activePlayer.isMoving()) {
+							    EngineAI evalendAI = new EngineAI(gameEngine);
+								String[] evalendMov = evalendAI.evalMove();
+								if (evalendMov[0].equals(" ") && evalendMov[1].equals(" ")) {
+									gameEngine.activePlayer.lost = true;
+									gameEngine.activePlayer.setNextPlayState();
+									
+								}
+							}
 				
 						} else if (gameEngine.activePlayer.removePending()) { 
 							gameEngine.remove(guiToBoardMap[i]);
-						    EngineAI evalendAI = new EngineAI(gameEngine);
-							String[] evalendMov = evalendAI.evalMove();
-							if (evalendMov[0].equals(" ") && evalendMov[1].equals(" ")) {
-								gameEngine.activePlayer.lost = true;
-								gameEngine.activePlayer.setNextPlayState();
+							repaint();
+							if (gameEngine.activePlayer.isMoving()) {
+							    EngineAI evalendAI = new EngineAI(gameEngine);
+								String[] evalendMov = evalendAI.evalMove();
+								if (evalendMov[0].equals(" ") && evalendMov[1].equals(" ")) {
+									gameEngine.activePlayer.lost = true;
+									gameEngine.activePlayer.setNextPlayState();
+									
+								}
 							}
 	
 						} else if (gameEngine.activePlayer.isMoving() || gameEngine.activePlayer.isFlying()) {
-
+							
+						    // evaluate if movable 
+						    EngineAI evalendAI = new EngineAI(gameEngine);
+							String[] evalendMov = evalendAI.evalMove();
+							if (evalendMov[0] == " " && evalendMov[1] == " ") {
+								gameEngine.activePlayer.lost = true;
+								gameEngine.activePlayer.setNextPlayState();
+								return;
+							
+							}
+							
 							if (gameEngine.activePlayer.getOwnedCells().contains(guiToBoardMap[i])) {
 								selectedMoveMakerIndex = i;
 
 							} else if (selectedMoveMakerIndex != -1) { 
+								
 								gameEngine.move(guiToBoardMap[selectedMoveMakerIndex], guiToBoardMap[i]);
 							    selectedMoveMakerIndex = -1;
-							    // evaluate if movable 
-							    EngineAI evalendAI = new EngineAI(gameEngine);
-								String[] evalendMov = evalendAI.evalMove();
-								System.out.println("****" + evalendMov[0] + "****,," + "****" + evalendMov[1] + "****");
-								if (evalendMov[0] == " " && evalendMov[1] == " ") {
-									gameEngine.activePlayer.lost = true;
-									gameEngine.activePlayer.setNextPlayState();
+							    repaint();
+								
+							    if (gameEngine.activePlayer.isMoving()) {
+								    evalendAI = new EngineAI(gameEngine);
+									evalendMov = evalendAI.evalMove();
+									if (evalendMov[0].equals(" ") && evalendMov[1].equals(" ")) {
+										gameEngine.activePlayer.lost = true;
+										gameEngine.activePlayer.setNextPlayState();
+										return;										
+									}
 								}
+
 							}
 						} 
 						repaint();
+						
 					}
 					
 					if (isAIMode == 1) {
@@ -273,20 +304,24 @@ public class BoardGUI extends JPanel {
 								}
 
 							} else if (gameEngine.activePlayer.isMoving() || gameEngine.activePlayer.isFlying()) {
+								
+							    // evaluate if movable 
+							    EngineAI evalendAI = new EngineAI(gameEngine);
+								String[] evalendMov = evalendAI.evalMove();
+								if (evalendMov[0] == " " && evalendMov[1] == " ") {
+									gameEngine.activePlayer.lost = true;
+									gameEngine.activePlayer.setNextPlayState();
+								
+								}
+								
 								if ( gameEngine.activePlayer.getOwnedCells().contains(guiToBoardMap[i]) ) {
 									selectedMoveMakerIndex = i;
 
 								} else if (selectedMoveMakerIndex != -1) { 
-									gameEngine.move(guiToBoardMap[selectedMoveMakerIndex], guiToBoardMap[i]);
-								    selectedMoveMakerIndex = -1;
 									
-								    // evaluate if movable 
-								    EngineAI currAI = new EngineAI(gameEngine);
-									String[] evalMov = currAI.evalMove();
-									if (evalMov[0].equals(" ") && evalMov[1].equals(" ")) {
-										gameEngine.activePlayer.lost = true;
-										gameEngine.activePlayer.setNextPlayState();
-									}
+									gameEngine.move(guiToBoardMap[selectedMoveMakerIndex], guiToBoardMap[i]);
+								    selectedMoveMakerIndex = -1;								
+
 								}
 							}
 							repaint();
@@ -306,16 +341,16 @@ public class BoardGUI extends JPanel {
 
 							} else if ( gameEngine.activePlayer.isMoving() ) {
 
-								EngineAI currAI = new EngineAI(gameEngine);
-								//String[] evalMov = currAI.moveRandom();
-								String[] evalMov = currAI.evalMove();
-								gameEngine.move(evalMov[0], evalMov[1]);
 							    EngineAI evalendAI = new EngineAI(gameEngine);
 								String[] evalendMov = evalendAI.evalMove();
 								if (evalendMov[0].equals(" ") && evalendMov[1].equals(" ")) {
 									gameEngine.activePlayer.lost = true;
 									gameEngine.activePlayer.setNextPlayState();
+						
 								}
+
+								gameEngine.move(evalendMov[0], evalendMov[1]);
+
 								
 							} else if ( gameEngine.activePlayer.isFlying() ) {
 								
@@ -333,12 +368,15 @@ public class BoardGUI extends JPanel {
 								String evalRv = currAI.evalRemove();
 								gameEngine.remove(evalRv);
 								repaint();
-							    EngineAI evalendAI = new EngineAI(gameEngine);
-								String[] evalendMov = evalendAI.evalMove();
-								if (evalendMov[0].equals(" ") && evalendMov[1].equals(" ")) {
-									gameEngine.activePlayer.lost = true;
-									gameEngine.activePlayer.setNextPlayState();
-								}
+							    if (gameEngine.activePlayer.isMoving()) {
+									EngineAI evalendAI = new EngineAI(gameEngine);
+									String[] evalendMov = evalendAI.evalMove();
+									if (evalendMov[0].equals(" ") && evalendMov[1].equals(" ")) {
+										gameEngine.activePlayer.lost = true;
+										gameEngine.activePlayer.setNextPlayState();
+									
+									}
+							    }
 							}	
 						}
 					}
