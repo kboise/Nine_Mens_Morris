@@ -2,6 +2,7 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -45,28 +46,7 @@ public class MainGUI extends JFrame {
         	@Override
         	protected void paintComponent(Graphics g){
         		super.paintComponent(g);
-//        		if ( boardPanel.gameEngine.gameOver()) {
-//        			 if (boardPanel.gameEngine.p2.hasLost()) {
-//        				 modeStatus.setForeground(Color.RED);
-//        				 modeStatus.setText("Game over - Black wins!!!");
-//        				 turnsStatus.setText("");
-//        			 } else {
-//        				 modeStatus.setText("Game over - White wins!!!");
-//        				 turnsStatus.setText("");
-//        			 } 
-//        		}  else if ( boardPanel.gameEngine.activePlayer.isFlying() ) {        		
-//        			modeStatus.setForeground(Color.RED);
-//            		modeStatus.setText("Flying!!!!!");
-//        		} else if ( boardPanel.gameEngine.activePlayer.isMoving() ) { 
-//        			modeStatus.setForeground(Color.BLACK);
-//        			modeStatus.setText("Mode: Moving");
-//        			} else if ( boardPanel.gameEngine.activePlayer.removePending()) {
-//        			modeStatus.setForeground(Color.BLUE);
-//        			modeStatus.setText("Mill formed! Remove opponent");
-//        		} else if ( boardPanel.gameEngine.activePlayer.isPlacing()) {
-//        			modeStatus.setForeground(Color.BLACK);
-//        			modeStatus.setText("Mode: Placing");
-//        		}
+
         		switch (boardPanel.gameEngine.activePlayer.getCurrentPlayState()) {
         		case GAMEOVER: 
         			if (boardPanel.gameEngine.p2.hasLost()) {
@@ -74,6 +54,7 @@ public class MainGUI extends JFrame {
         				modeStatus.setText("Game over - White wins!!!");
         				turnsStatus.setText("");
         			} else {
+        				modeStatus.setForeground(Color.RED);
         				modeStatus.setText("Game over - Black wins!!!");
         				turnsStatus.setText("");
         			} 
@@ -114,6 +95,8 @@ public class MainGUI extends JFrame {
         
         
         startGameButton = new JButton("Play Again");
+        startGameButton.setPreferredSize(new Dimension(200,40));
+        startGameButton.setFont(new Font(Font.DIALOG_INPUT, Font.BOLD, 25));
         startGameButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -121,7 +104,8 @@ public class MainGUI extends JFrame {
                 boardPanel.setEngine(new Engine());
             }
         });
-        
+        cmbMessageList.setPreferredSize(new Dimension(150, 30));
+        cmbMessageList.setFont(new Font(Font.DIALOG_INPUT, Font.BOLD, 25));
         cmbMessageList.addActionListener(new ActionListener() {
         	
 

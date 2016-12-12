@@ -1,7 +1,7 @@
 package engine;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+
 import java.util.Random;
 
 import board.Board;
@@ -18,22 +18,24 @@ public class EngineAI {
 		this.engine = engine;
 	}
 
-	public void placeRandom() {
+	public String placeRandom() {
 		String[] dstString = engine.cBoard.getVacantCells().split(", ");
 		Random rand = new Random();
 		int n = rand.nextInt(dstString.length);
-		engine.place(dstString[n]);
-		//return dstString[n];
+		//engine.place(dstString[n]);
+		return dstString[n];
 	}
 	
-	public void moveRandom() {
+	public String[] moveRandom() {
+		String[] movString = {" ", " "};
 		Board curBoard = engine.cBoard;
 		String[] srcString = engine.activePlayer.getOwnedCells().split(", ");
 		int n = srcString.length;
 		Random randgen = new Random();
 		int randstart = randgen.nextInt(n);
 		int j;
-		moveLoop:
+		
+		//moveLoop:
 		for (int k = randstart; k < randstart + n; k++){
 			if (k < n) { 
 				j = k;
@@ -45,63 +47,81 @@ public class EngineAI {
 			
 			if (temCell.hasOpenNeighbor()){
 				int randDir = randgen.nextInt(4);
-				switch (randDir) {
-				case 0:
-				if (temCell.left != null){
-					if (temCell.left.isEmpty()){
-						engine.move(srcString[j],temCell.left.label);
-						break moveLoop;
-						}
-				}
-				case 1:
-				if (temCell.right != null) {
-					if (temCell.right.isEmpty()){
-						engine.move(srcString[j],temCell.right.label);
-						break moveLoop;
-						}
-				}
-				case 2:
-				if (temCell.top != null) {
-					if (temCell.top.isEmpty()){
-						engine.move(srcString[j],temCell.top.label);
-						break moveLoop;
-						}
-				}
-				case 3:
-				if (temCell.bottom != null) {
-					if (temCell.bottom.isEmpty()){
-						engine.move(srcString[j],temCell.bottom.label);
-						break moveLoop;
-						}
-				}
+				for (int t = 0; t < 2; t++){
+					switch (randDir) {
+					case 0:
+					if (temCell.left != null){
+						if (temCell.left.isEmpty()){
+							movString[0] = srcString[j];
+							movString[1] = temCell.left.label;
+							return  movString;
+							//engine.move(srcString[j],temCell.left.label);
+							//break moveLoop;
+							}
+					}
+					case 1:
+					if (temCell.right != null) {
+						if (temCell.right.isEmpty()){
+							movString[0] = srcString[j];
+							movString[1] = temCell.right.label;
+							return  movString;
+							//engine.move(srcString[j],temCell.right.label);
+							//break moveLoop;
+							}
+					}
+					case 2:
+					if (temCell.top != null) {
+						if (temCell.top.isEmpty()){
+							movString[0] = srcString[j];
+							movString[1] = temCell.top.label;
+							return  movString;
+							//engine.move(srcString[j],temCell.top.label);
+							//break moveLoop;
+							}
+					}
+					case 3:
+					if (temCell.bottom != null) {
+						if (temCell.bottom.isEmpty()){
+							movString[0] = srcString[j];
+							movString[1] = temCell.bottom.label;
+							return  movString;
+							//engine.move(srcString[j],temCell.bottom.label);
+							//break moveLoop;
+							}
+					}
+					}
+					randDir = 0;
 				}
 			}
 		}
+		return movString;	
 	}
 	
-	public void flyRandom() {
+	public String[] flyRandom() {
+		String[] flyString = {" ", " "};
 		String[] srcString = engine.activePlayer.getOwnedCells().split(", ");
 		Random randgen = new Random();
 		int n = randgen.nextInt(srcString.length);
 		String[] dstString = engine.cBoard.getVacantCells().split(", ");
 		randgen = new Random();
 		int m = randgen.nextInt(dstString.length);
-		engine.move(srcString[n], dstString[m]);
+		flyString[0] = srcString[n];
+		flyString[1] = dstString[m];
+		return flyString;
+		//engine.move(srcString[n], dstString[m]);
 	}
 	
-	public void removeRandom() {
+	public String removeRandom() {
 		ArrayList<String> rmString = engine.activePlayer.opponent.getRemovableCells();
 		Random randgen = new Random();
 		int n = randgen.nextInt(rmString.size());
-		engine.remove(rmString.get(n));
+		return rmString.get(n);
+		//engine.remove(rmString.get(n));
 	}
 	
 	public String evalPlace() {
 		final String ownString = engine.activePlayer.getOwnedCells();
 		final String oppString = engine.activePlayer.opponent.getOwnedCells();
-		String[] emptyString = engine.cBoard.getVacantCells().split(", ");
-		Random rand = new Random();
-		int n = rand.nextInt(emptyString.length);
 		String dstCell = null;
 		int count = 0;
 		
@@ -142,11 +162,414 @@ public class EngineAI {
 			}
 		}
 		
-		dstCell = null;
-		dstCell = emptyString[n];
+		dstCell = placeRandom();
 		//System.out.println(dstCell + "*****3*****");
-		return dstCell;
+		return dstCell;	
+	}
+	
+	public String evalRemove() {
+		ArrayList<String> rmString = engine.activePlayer.opponent.getRemovableCells();
+		final String ownString = engine.activePlayer.getOwnedCells();
+		final String oppString = engine.activePlayer.opponent.getOwnedCells();
+		String rmCell = null;
+		int count = 0;
+		int empty = 0;
 		
+		for(String[] mills : millString) {
+			count = 0;
+			empty = 0;
+			rmCell = null;
+			for(String cell : mills) {
+				if (oppString.contains(cell) && rmString.contains(rmCell)) {
+					count = count + 1;
+					rmCell = cell;
+					//System.out.println(count);
+				} else if (!ownString.contains(cell)){
+					empty++;
+				}
+			}
+			
+			if (count == 2 && empty == 1 && rmCell !=null) {
+				return rmCell;
+				
+			}
+		}
+		rmCell = removeRandom();
+		return rmCell;
+	}
+	
+	public String[] evalMove() {
+		Board curBoard = engine.cBoard;
+		final String ownString = engine.activePlayer.getOwnedCells();
+		final String oppString = engine.activePlayer.opponent.getOwnedCells();
+		String dstCell = null;
+		String srcCell = null;
+		String[] movString = {" ", " "};
+		int count = 0;
+		int loop = 0;
+		for(String[] mills : millString) {
+			count = 0;
+			dstCell = null;
+			for(String cell : mills) {
+				if (ownString.contains(cell)) {
+					count = count + 1;
+				} else if (!oppString.contains(cell)){
+					dstCell = cell;
+				}
+			}
+			
+			if (count == 2 && dstCell != null) {
+				Cell temCell = curBoard.getCell(dstCell);
+				if (loop < 8) {
+
+					if (temCell.top != null) {
+						if (ownString.contains(temCell.top.label)) {
+							srcCell = temCell.top.label;
+							movString[0] = srcCell;
+							movString[1] = dstCell;
+							return movString;
+						}
+					}
+					
+					if (temCell.bottom != null) {
+						if (ownString.contains(temCell.bottom.label)) {
+							srcCell = temCell.bottom.label;
+							movString[0] = srcCell;
+							movString[1] = dstCell;
+							return movString;
+						}
+					}	
+				} else {
+					
+					if (temCell.left != null) {
+						if (ownString.contains(temCell.left.label)) {
+							srcCell = temCell.left.label;
+							movString[0] = srcCell;
+							movString[1] = dstCell;
+							return movString;
+						}
+					}
+					
+					if (temCell.right != null) {
+						if (ownString.contains(temCell.right.label)) {
+							srcCell = temCell.right.label;
+							movString[0] = srcCell;
+							movString[1] = dstCell;
+							return movString;
+						}
+					}
+					
+				}
+			}
+			loop++;
+		}
+		
+		count = 0;
+		loop = 0;
+		dstCell = null;
+		for(String[] mills : millString) {
+			count = 0;
+			dstCell = null;
+			for(String cell : mills) {
+				if (oppString.contains(cell)) {
+					count = count + 1;
+				} else if (!ownString.contains(cell)){
+					dstCell = cell;
+				}
+			}
+			
+			if (count == 2 && dstCell != null) {
+				Cell temCell = curBoard.getCell(dstCell);
+				if (loop < 8) {
+
+					if (temCell.top != null) {
+						if (ownString.contains(temCell.top.label)) {
+							srcCell = temCell.top.label;
+							movString[0] = srcCell;
+							movString[1] = dstCell;
+							return movString;
+						}
+					}
+					
+					if (temCell.bottom != null) {
+						if (ownString.contains(temCell.bottom.label)) {
+							srcCell = temCell.bottom.label;
+							movString[0] = srcCell;
+							movString[1] = dstCell;
+							return movString;
+						}
+					}	
+				} else {
+					
+					if (temCell.left != null) {
+						if (ownString.contains(temCell.left.label)) {
+							srcCell = temCell.left.label;
+							movString[0] = srcCell;
+							movString[1] = dstCell;
+							return movString;
+						}
+					}
+					
+					if (temCell.right != null) {
+						if (ownString.contains(temCell.right.label)) {
+							srcCell = temCell.right.label;
+							movString[0] = srcCell;
+							movString[1] = dstCell;
+							return movString;
+						}
+					}
+					
+				}
+			}
+			loop++;
+		}
+		
+		movString = moveRandom();
+		return movString;	
+	}
+	
+	public String[] evalMoveInverse() {
+		Board curBoard = engine.cBoard;
+		final String ownString = engine.activePlayer.opponent.getOwnedCells();
+		final String oppString = engine.activePlayer.getOwnedCells();
+		String dstCell = null;
+		String srcCell = null;
+		String[] movString = {" ", " "};
+		int count = 0;
+		int loop = 0;
+		for(String[] mills : millString) {
+			count = 0;
+			dstCell = null;
+			for(String cell : mills) {
+				if (ownString.contains(cell)) {
+					count = count + 1;
+				} else if (!oppString.contains(cell)){
+					dstCell = cell;
+				}
+			}
+			
+			if (count == 2 && dstCell != null) {
+				Cell temCell = curBoard.getCell(dstCell);
+				if (loop < 8) {
+
+					if (temCell.top != null) {
+						if (ownString.contains(temCell.top.label)) {
+							srcCell = temCell.top.label;
+							movString[0] = srcCell;
+							movString[1] = dstCell;
+							return movString;
+						}
+					}
+					
+					if (temCell.bottom != null) {
+						if (ownString.contains(temCell.bottom.label)) {
+							srcCell = temCell.bottom.label;
+							movString[0] = srcCell;
+							movString[1] = dstCell;
+							return movString;
+						}
+					}	
+				} else {
+					
+					if (temCell.left != null) {
+						if (ownString.contains(temCell.left.label)) {
+							srcCell = temCell.left.label;
+							movString[0] = srcCell;
+							movString[1] = dstCell;
+							return movString;
+						}
+					}
+					
+					if (temCell.right != null) {
+						if (ownString.contains(temCell.right.label)) {
+							srcCell = temCell.right.label;
+							movString[0] = srcCell;
+							movString[1] = dstCell;
+							return movString;
+						}
+					}
+					
+				}
+			}
+			loop++;
+		}
+		
+		count = 0;
+		loop = 0;
+		dstCell = null;
+		for(String[] mills : millString) {
+			count = 0;
+			dstCell = null;
+			for(String cell : mills) {
+				if (oppString.contains(cell)) {
+					count = count + 1;
+				} else if (!ownString.contains(cell)){
+					dstCell = cell;
+				}
+			}
+			
+			if (count == 2 && dstCell != null) {
+				Cell temCell = curBoard.getCell(dstCell);
+				if (loop < 8) {
+
+					if (temCell.top != null) {
+						if (ownString.contains(temCell.top.label)) {
+							srcCell = temCell.top.label;
+							movString[0] = srcCell;
+							movString[1] = dstCell;
+							return movString;
+						}
+					}
+					
+					if (temCell.bottom != null) {
+						if (ownString.contains(temCell.bottom.label)) {
+							srcCell = temCell.bottom.label;
+							movString[0] = srcCell;
+							movString[1] = dstCell;
+							return movString;
+						}
+					}	
+				} else {
+					
+					if (temCell.left != null) {
+						if (ownString.contains(temCell.left.label)) {
+							srcCell = temCell.left.label;
+							movString[0] = srcCell;
+							movString[1] = dstCell;
+							return movString;
+						}
+					}
+					
+					if (temCell.right != null) {
+						if (ownString.contains(temCell.right.label)) {
+							srcCell = temCell.right.label;
+							movString[0] = srcCell;
+							movString[1] = dstCell;
+							return movString;
+						}
+					}
+					
+				}
+			}
+			loop++;
+		}
+		
+		movString = moveRandom();
+		return movString;	
+	}
+	
+	public String[] evalFly() {
+		final String ownString = engine.activePlayer.getOwnedCells();
+		final String oppString = engine.activePlayer.opponent.getOwnedCells();
+		String[] flyString = {" ", " "};
+		String dstCell = null;
+		String srcCell = null;
+		int count = 0;
+		
+		// forming own mill check
+		for(String[] mills : millString) {
+			count = 0;
+			dstCell = null;
+			srcCell = ownString;
+			for(String cell : mills) {
+				if (ownString.contains(cell)) {
+					count = count + 1;
+					srcCell = srcCell.replace(cell, "");
+				} else if (!oppString.contains(cell)){
+					dstCell = cell;
+				}
+			}
+			
+			if (count == 2 && dstCell != null) {
+				//System.out.println(dstCell + "*****1*****");
+				flyString[1] = dstCell;
+				srcCell = srcCell.replaceAll(",", "");
+				srcCell = srcCell.replaceAll(" ", "");
+				flyString[0] = srcCell;
+				return flyString;
+			}
+		}
+		
+		dstCell = null;
+		count = 0;
+		srcCell = ownString;
+		
+		for(String[] mills : millString) {
+			count = 0;
+			dstCell = null;
+
+			for(String cell : mills) {
+				if (oppString.contains(cell)) {
+					count = count + 1;
+					//System.out.println(count);
+				} else if (ownString.contains(cell)){
+					//System.out.println(cell);
+					dstCell = cell;
+				}
+			}
+			
+			if (count == 2 && dstCell !=null) {
+				//System.out.println(dstCell + "*****2*****");
+				srcCell = srcCell.replace(dstCell, "");
+			}
+		}
+		
+		srcCell = srcCell.replaceAll(",", "");
+		srcCell = srcCell.replaceAll(" ", "");
+		if (!srcCell.equals("")) {
+			srcCell = srcCell.substring(0, 2);
+			if (engine.activePlayer.opponent.isMoving()) {
+				String[] guessOppMov = evalMoveInverse();
+				dstCell = guessOppMov[1];
+			} else if (engine.activePlayer.opponent.isFlying()) {
+				String[] guessOppMov = evalFlyInverse();
+				dstCell = guessOppMov[1];
+			}
+			
+			flyString[0] = srcCell;
+			flyString[1] = dstCell;
+			return flyString;
+		}
+		
+		flyString = flyRandom();
+		//System.out.println(dstCell + "*****3*****");
+		return flyString;	
+	}
+	
+	public String[] evalFlyInverse() {
+		final String ownString = engine.activePlayer.opponent.getOwnedCells();
+		final String oppString = engine.activePlayer.getOwnedCells();
+		String[] flyString = {" ", " "};
+		String dstCell = null;
+		String srcCell = null;
+		int count = 0;
+		
+		for(String[] mills : millString) {
+			count = 0;
+			dstCell = null;
+			srcCell = ownString;
+			for(String cell : mills) {
+				if (ownString.contains(cell)) {
+					count = count + 1;
+					srcCell = srcCell.replace(cell, "");
+				} else if (!oppString.contains(cell)){
+					dstCell = cell;
+				}
+			}
+			
+			if (count == 2 && dstCell != null) {
+				//System.out.println(dstCell + "*****1*****");
+				flyString[1] = dstCell;
+				srcCell = srcCell.replaceAll(",", "");
+				srcCell = srcCell.replaceAll(" ", "");
+				flyString[0] = srcCell;
+				return flyString;
+			}
+		}
+		
+		flyString = flyRandom();
+		//System.out.println(dstCell + "*****3*****");
+		return flyString;	
 	}
 	
 }
